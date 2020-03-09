@@ -1,5 +1,5 @@
 /**
- * @file slice.h
+ * @file gop_encoder.h
  * @author Caoyang Jiang (www.hypevr.com)
  * @brief
  * @version 0.1

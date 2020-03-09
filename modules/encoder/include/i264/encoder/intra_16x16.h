@@ -1,5 +1,5 @@
 /**
- * @file slice.h
+ * @file intra_16x16.h
  * @author Caoyang Jiang (www.hypevr.com)
  * @brief
  * @version 0.1
@@ -8,3 +8,5 @@
  * @copyright Copyright (c) 2020
  *
  */
+
+namespace i264 {}

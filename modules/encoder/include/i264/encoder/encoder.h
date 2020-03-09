@@ -1,5 +1,5 @@
 /**
- * @file slice.h
+ * @file encoder.h
  * @author Caoyang Jiang (www.hypevr.com)
  * @brief
  * @version 0.1
@@ -8,3 +8,9 @@
  * @copyright Copyright (c) 2020
  *
  */
+
+namespace i264 {
+class Encoder {
+ public:
+};
+}  // namespace i264

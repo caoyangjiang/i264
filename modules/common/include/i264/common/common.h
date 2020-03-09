@@ -6,18 +6,22 @@
 WINDOWS_DISABLE_ALL_WARNING
 WINDOWS_ENABLE_ALL_WARNING
 
-namespace i264
-{
+namespace i264 {
 
-class I264_COMMON_DLL Test
-{
-public:
+class I264_COMMON_DLL Test {
+ public:
   Test() = default;
   ~Test() = default;
 
   int Run() const;
 };
 
-} // namespace i264
+template <class T>
+struct Position {
+  T x;
+  T y;
+};
 
-#endif // MODULES_COMMON_INCLUDE_I264_COMMON_COMMON_H_
+}  // namespace i264
+
+#endif  // MODULES_COMMON_INCLUDE_I264_COMMON_COMMON_H_
