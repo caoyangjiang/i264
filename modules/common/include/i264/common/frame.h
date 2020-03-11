@@ -6,10 +6,19 @@
 
 namespace i264 {
 
-class Frame
-{
-public:
-private:
+enum class ColorModel { UNKNOWN = -1, YUV = 0, RGB = 1, XYZ = 2 };
+
+enum class ColorFormat {
+  UNKNOWN = -1,
+  YUV400 = 0,
+  YUV420 = 1,
+  YUV422 = 2,
+  YUV444 = 3
+};
+
+class Frame {
+ public:
+ private:
   int picture_order_count = 0;
   int type_ = 0;
   int forced_type_ = 0;
@@ -39,6 +48,6 @@ private:
   std::array<int, 3> lines_;
 
   std::vector<uint8_t> img_buffer_;
-  std::array<uint8_t, 3> plane_;
+  std::array<uint8_t*, 3> plane_;
 };
-}
+}  // namespace i264

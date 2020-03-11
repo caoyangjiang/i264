@@ -67,6 +67,9 @@ class Macroblock {
   bool is_lossless = false;
   bool is_intra_block = true;
 
+  uint8_t intra_pred_modes[16];
+  uint8_t intra_pred_modes8x8[16];
+
   // neighbor information
   Macroblock* neighbor_a = std::nullptr_t;
   Macroblock* neighbor_b = std::nullptr_t;

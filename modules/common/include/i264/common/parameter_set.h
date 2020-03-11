@@ -22,7 +22,7 @@ struct VUIParameters {};
 
 // 7.3.2.1.1 (nal unit type = 7)
 struct SPS {
-  bool valid = false;  // is this needed?
+  bool valid = 0;  // is this needed?
 
   uint64_t profile_idc = 0;        // u(8)
   bool constrained_set0_flag = 0;  // u(1)
@@ -38,7 +38,7 @@ struct SPS {
   uint32_t bit_depth_chroma_minus8 = 0;          // ue(v)
   int qpprime_y_zero_transform_bypass_flag = 0;  // u(1)
 
-  bool seq_scaling_matrix_present_flag = false;       // u(1)
+  bool seq_scaling_matrix_present_flag = 0;           // u(1)
   std::array<int, 12> seq_scaling_list_present_flag;  // u(1)
   Matrix2D<int, 6, 16> scaling_list_4x4;              // se(v)
   Matrix2D<int, 6, 64> scaling_list_8x8;              // se(v)
@@ -49,7 +49,7 @@ struct SPS {
   uint32_t pic_order_cnt_type = 0;                 // ue(v)
   uint32_t log2_max_pic_order_cnt_lsb_minus4 = 0;  // ue(v)
 
-  bool delta_pic_order_always_zero_flag = false;       // u(1)
+  bool delta_pic_order_always_zero_flag = 0;           // u(1)
   int offset_for_non_ref_pic = 0;                      // se(v)
   int offset_for_top_to_bottom_field = 0;              // se(v)
   uint32_t num_ref_frames_in_pic_order_cnt_cycle = 0;  // ue(v)
@@ -59,15 +59,15 @@ struct SPS {
   bool gaps_in_frame_num_value_allowed_flag = = 0;  // u(1)
   uint32_t pic_width_in_mbs_minus1 = 0;             // ue(v)
   uint32_t pic_height_in_map_units_minus1 = 0;      // ue(v)
-  bool frame_mbs_only_flag = false;                 // u(1)
+  bool frame_mbs_only_flag = 0;                     // u(1)
 
-  bool mb_adaptive_frame_field_flag = false;  // u(1)
-  bool direct_8x8_inference_flag = false;     // u(1)
-  bool frame_cropping_flag = false;           // u(1)
-  uint32_t frame_crop_left_offset = 0;        // ue(v)
-  uint32_t frame_crop_right_offset = 0;       // ue(v)
-  uint32_t frame_crop_top_offset = 0;         // ue(v)
-  uint32_t frame_crop_bottom_offset = 0;      // ue(v)
+  bool mb_adaptive_frame_field_flag = 0;  // u(1)
+  bool direct_8x8_inference_flag = 0;     // u(1)
+  bool frame_cropping_flag = 0;           // u(1)
+  uint32_t frame_crop_left_offset = 0;    // ue(v)
+  uint32_t frame_crop_right_offset = 0;   // ue(v)
+  uint32_t frame_crop_top_offset = 0;     // ue(v)
+  uint32_t frame_crop_bottom_offset = 0;  // ue(v)
   std::optional<VUIParameters> vui_parameters_;
 };
 
@@ -87,25 +87,25 @@ struct SubsetSPS {};
 
 // 7.3.2.2 (nal unit type = 8)
 struct PPS {
-  bool valid = false;  // is this needed?
+  bool valid = 0;  // is this needed?
 
   uint32_t pic_parameter_set_id = 0;                  // ue(v)
   uint32_t seq_parameter_set_id = 0;                  // ue(v)
-  bool entropy_coding_mode_flag = false;              // u(1)
+  bool entropy_coding_mode_flag = 0;                  // u(1)
   bool bottom_field_pic_order_in_frame_present_flag;  // u(1)
   uint32_t num_slice_groups_minus1 = 0;               // ue(v)
   uint32_t slice_group_map_type = 0;                  // ue(v)
   std::array<int, 8> run_length_minus1;               // ue(v)
   std::array<int, 8> top_left;                        // ue(v)
   std::array<int, 8> bottom_right;                    // ue(v)
-  bool slice_group_change_direction_flag = false;     // u(1)
+  bool slice_group_change_direction_flag = 0;         // u(1)
   uint32_t slice_group_change_rate_minus1 = 0;        // ue(v)
   uint32_t pic_size_in_map_units_minus1 = 0;          // ue(v)
   std::vector<uint8_t> slice_group_id;                // ue(v)
 
   uint32_t num_ref_idx_l0_default_active_minus1 = 0;  // ue(v)
   uint32_t num_ref_idx_l1_default_active_minus1 = 0;  // ue(v)
-  bool weighted_pred_flag = false;                    // u(1)
+  bool weighted_pred_flag = 0;                        // u(1)
   uint32_t weighted_bipred_idc = 0;                   // u(2)
   int pic_init_qp_minus26 = 0;                        // se(v)
   int pic_init_ps_minus26 = 0;                        // se(v)
@@ -113,7 +113,7 @@ struct PPS {
   bool deblocking_filter_control_present_flag = 0;    // u(1)
   bool constrained_intra_pred_flag = 0;               // u(1)
   bool redundant_pic_cnt_present_flag = 0;            // u(1)
-  bool transform_8x8_mode_flag = false;               // u(1)
+  bool transform_8x8_mode_flag = 0;                   // u(1)
   bool pic_scaling_matrix_present_flag = 0;           // u(1)
 
   std::array<int, 12> pic_scaling_list_present_flag;  // u(1)

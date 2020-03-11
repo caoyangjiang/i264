@@ -9,6 +9,8 @@
  *
  */
 
+#include "i264/common/bits.h"
+
 namespace i264 {
 class enum ColorPlane {
   PLANE_Y = 0,
@@ -19,7 +21,16 @@ class enum ColorPlane {
   PLANE_R = 2
 };
 
+class enum SliceType {
+  B_SLICE = 0,
+  P_SLICE = 1,
+  I_SLICE = 2,
+  NUMBER_OF_SLICE_TYPES = 3
+};
+
 template <class T, int D1, int D2>
 using Matrix2D = std::array<sd::array<T, D1>, D2>;
+
+using BitStream = Bit;
 
 }  // namespace i264
