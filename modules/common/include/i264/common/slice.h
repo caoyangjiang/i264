@@ -8,3 +8,11 @@
  * @copyright Copyright (c) 2020
  *
  */
+
+namespace i264 {
+
+class Slice {
+ public:
+ private:
+};
+}  // namespace i264

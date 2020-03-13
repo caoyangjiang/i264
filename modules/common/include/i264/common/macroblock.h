@@ -16,30 +16,56 @@
 #include "i264/common/global.h"
 
 namespace i264 {
+class Slice;
+
+/**
+ * @brief Macroblock should only hold macroblock related encoding/decoding data.
+ *
+ */
 class Macroblock {
  public:
-  /**
-   * @brief Pick a 4x4 to perform the inverse 4x4 transformation
-   *
-   * @param plane plane id
-   * @param x_offset horizontal offset to the 4x4 block within the macroblock.
-   * @param y_offset vertical pixel offset to the 4x4 block within the
-   * macroblock
-   */
-  void InverseTransform4x4(ColorPlane plane, int x_offset, int y_offset);
+  Macroblock() = default;
+  explicit Macroblock(const Slice* belonging_slice);
 
-  /**
-   * @brief Pick a 8x8 to perform the inverse 8x8 transformation
-   *
-   * @param plane plane id
-   * @param x_offset horizontal offset to the 4x4 block within the macroblock.
-   * @param y_offset vertical pixel offset to the 4x4 block within the
-   * macroblock
-   */
-  void InverseTransform4x4(ColorPlane plane, int x_offset, int y_offset);
+  // assign macroblock attributes and its associated buffers
+  void AssignIndexWithinSlice(int index);
+  void AssignLocationInPixel(int x, int y);
+  void AssignReconBuffer(FrameBuffer* buffer_start_addr);
+  void AssignSourceBuffer(FrameBuffer* buffer_start_addr);
+  void AssignResidualBuffer(FrameBuffer* buffer_start_addr);
+  void SetNeighborMacroblock(Macroblock* mb, enum NEIGHBOR_MB_POS position);
+  const Macroblock* GetNeighborMacroblock(enum NEIGHBOR_MB_POS position) const;
+
+  // retrieve pixels operations (designed for readability)
+  template <class BLOCK_WIDTH, class BLOCK_HEIGHT>
+  Array2D<uint8_t, BLOCK_WIDTH, BLOCK_WIDTH> GetOrignalPixels(
+      int channel_id, enum FrameType type, int zscan_index) const;
+  template <class SIZE>
+  Array1D<uint8_t, SIZE> GetBottomMostRow4x4(int channel, enum FrameType type,
+                                             int zscan_index) const;
+  template <class SIZE>
+  Array1D<uint8_t, SIZE> GetRightMostColumn4x4(int channel, enum FrameType type,
+                                               int zscan_index) const;
+
+  // after rate-distortion, set modes
+  void StoreBestModeAsIntra16x16(enum INTRA_16x16_MODE modes);
+  void StoreBestModeAsIntra4x4(int zscan_index, INTRA_4x4_MODE mode);
+  void StoreBestModeAsIntra4x4(Array<enum INTRA_4x4_MODE, 16> modes);
+
+  // go into residual buffer, residual = intra/inter compensate + dct + quantize
+  void StoreLumaResidual(Array2D<16, 16> residual);
+  void StoreLumaResidual(Array2D<4, 4> residual, int zscan_index);
+  void StoreChromaResidual(Array2D<8, 8> residual);
+  void StoreChromaResidual(Array2D<2, 2> residual, int zscan_index);
+
+  // go into recon buffer. recon = residual + deblocking
+  void StoreLumaRecon(Array2D<16, 16> residual);
+  void StoreLumaRecon(Array2D<4, 4> residual, int zscan_index);
+  void StoreChromaRecon(Array2D<8, 8> residual);
+  void StoreChromaRecon(Array2D<2, 2> residual, int zscan_index);
 
  private:
-  Slice* slice_ = std::nullptr_t;
+  const Slice* slice_ = std::nullptr_t;
   int address_zscan_ = -1;
   Position<uint16_t> pos_2d_ = {0, 0};
   uint16_t type_ = 0;
@@ -47,7 +73,7 @@ class Macroblock {
   // coding
   int cbp_;
   std::array<CodedBitPattern, 3> cbp_struct_;
-  int intra16_mode_ = 0;
+  // int intra16_mode_ = 0;
   uint8_t chroma_intra_prediction_mode_ = 0;
 
   // subblock access
@@ -61,6 +87,11 @@ class Macroblock {
   int subblock_x = 0;
   int subblock_y = 0;
 
+  // mode decision
+  enum INTRA_BLOCK_TYPE best_block_type_;
+  enum INTRA_16x16_MODE best_16x16_luma_mode_;
+  Array2D<enum INTRA_4x4_MODE, 4, 4> best_4x4_mode_;
+
   // quantize related
   std::array<int, MAX_COLOR_PLANE> qp_;
   std::array<int, MAX_COLOR_PLANE> qp_scale_;
@@ -71,10 +102,11 @@ class Macroblock {
   uint8_t intra_pred_modes8x8[16];
 
   // neighbor information
-  Macroblock* neighbor_a = std::nullptr_t;
-  Macroblock* neighbor_b = std::nullptr_t;
-  Macroblock* neighbor_c = std::nullptr_t;
-  Macroblock* neighbor_d = std::nullptr_t;
+  Macroblock* top_mb_ = std::nullptr_t;
+  Macroblock* top_right_mb_ = std::nullptr_t;
+  Macroblock* top_left_mb_ = std::nullptr_t;
+  Macroblock* left_mb_ = std::nullptr_t;
+  Slice* belong_slice_ = std::nullptr_t;
 };
 }  // namespace i264
 

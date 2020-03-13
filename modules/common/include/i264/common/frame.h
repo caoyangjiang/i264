@@ -16,6 +16,22 @@ enum class ColorFormat {
   YUV444 = 3
 };
 
+class FrameBuffer {
+ public:
+  FrameBuffer() = default;
+  ~FrameBuffer() = default;
+
+  FrameBuffer(int width, int height, int channel);
+
+  uint8_t* Buffer(int channel);
+  const uint8_t* Buffer(int channel) const;
+  int Width(int channel) const;
+  int Height(int channel) const;
+
+ private:
+  std::shared_ptr<uint8_t[]> buffer_;
+};
+
 class Frame {
  public:
  private:

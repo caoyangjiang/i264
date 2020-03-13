@@ -18,7 +18,11 @@ class Encoder {
   explicit Encoder(const EncoderCfg& cfg);
   void Encode(const Frame& frame, std::list<AccessUnit>& bit_stream);
 
+  BitStreamWriter& GetBitStreamWriter();
+  RateControl& GetRateControl();
+
  private:
+  const EncoderCfg& cfg;
   std::unique_ptr<GOPEncoder> gop_encoder_;
   std::unique_ptr<RateControl> rate_control_;
   std::unique_ptr<BitStreamWriter> stream_writer_;

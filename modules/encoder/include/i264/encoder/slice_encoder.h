@@ -14,7 +14,7 @@
 namespace i264 {
 class SliceEncoder {
  public:
-  explicit SliceEncoder(FrameEncoder& gop_encoder);
+  explicit SliceEncoder(FrameEncoder& frame_encoder);
 
   Coder& GetCoder();
   const Coder& GetCoder() const;

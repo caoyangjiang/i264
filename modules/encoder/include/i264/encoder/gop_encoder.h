@@ -17,13 +17,16 @@ namespace i264 {
 class GOPEncoder {
  public:
   explicit GOPEncoder(Encoder& encoder);
-  bool Encode(const Frame& frame, Bits& BitStream);
+  bool Encode(int poc, const Frame& frame);
   bool GetGOPSize() const;
   const std::list<Frame>& GetReconstructedFrames() const;
 
  private:
+  NalUnitType GetNalUnitType(int current_poc);
+
+ private:
   Encoder& encoder_;
-  std::unique_ptr<SliceEncoder> slice_encoder_;
+  std::unique_ptr<FrameEncoder> slice_encoder_;
   std::list<Frame> recon_list_;
 };
 }  // namespace i264

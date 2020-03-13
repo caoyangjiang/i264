@@ -1,5 +1,5 @@
 /**
- * @file intra_4x4.h
+ * @file macroblock.cpp
  * @author Caoyang Jiang (www.hypevr.com)
  * @brief
  * @version 0.1
@@ -9,9 +9,4 @@
  *
  */
 
-namespace i264 {
-
-class Intra16x16Predictor {
- public:
-};
-}  // namespace i264
+namespace i264 {}
