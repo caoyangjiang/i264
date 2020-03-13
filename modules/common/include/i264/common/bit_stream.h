@@ -9,8 +9,13 @@
  *
  */
 
+#ifndef MODULES_COMMON_INCLUDE_I264_COMMON_BIT_STREAM_H_
+#define MODULES_COMMON_INCLUDE_I264_COMMON_BIT_STREAM_H_
+
 namespace i264 {
 class BitStreamWriter {
  public:
 };
 }  // namespace i264
+
+#endif  // MODULES_COMMON_INCLUDE_I264_COMMON_BIT_STREAM_H_

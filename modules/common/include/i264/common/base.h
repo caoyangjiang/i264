@@ -1,5 +1,13 @@
-// Copyright 2020 Caoyang Jiang
+/**
+ * @brief
+ *
+ */
+
+#ifndef MODULES_COMMON_INCLUDE_I264_COMMON_BASE_H_
+#define MODULES_COMMON_INCLUDE_I264_COMMON_BASE_H_
 
 namespace i264 {
 #define I264_REF_MAX 16
-}
+}  // namespace i264
+
+#endif  // MODULES_COMMON_INCLUDE_I264_COMMON_BASE_H_

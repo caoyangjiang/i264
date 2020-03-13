@@ -9,9 +9,14 @@
  *
  */
 
+#ifndef MODULES_ENCODER_INCLUDE_I264_ENCODER_INTRA_4X4_H_
+#define MODULES_ENCODER_INCLUDE_I264_ENCODER_INTRA_4X4_H_
+
 namespace i264 {
 
 class Intra16x16Predictor {
  public:
 };
 }  // namespace i264
+
+#endif  // MODULES_ENCODER_INCLUDE_I264_ENCODER_INTRA_4X4_H_

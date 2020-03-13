@@ -9,11 +9,15 @@
  *
  */
 
+#include "i264/encoder/macroblock_encoder.h"
+
 #include "i264/common/types.h"
+#include "i264/encoder/slice_encoder.h"
 
 namespace i264 {
 
-void MacroblockEncoder::MacroblockEncoder(const SliceEncoder& slice_encoder) {}
+MacroblockEncoder::MacroblockEncoder(const SliceEncoder& slice_encoder)
+    : slice_encoder_(slice_encoder) {}
 
 void MacroblockEncoder::Encode(Macroblock& macroblock) {
   // if this block is a intra block

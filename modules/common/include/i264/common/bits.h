@@ -1,9 +1,20 @@
-// Copyright 2020 Caoyang Jiang
+/**
+ * @file bits.h
+ * @author Caoyang Jiang (www.hypevr.com)
+ * @brief
+ * @version 0.1
+ * @date 2020-03-13
+ *
+ * @copyright Copyright (c) 2020
+ *
+ */
+
+#ifndef MODULES_COMMON_INCLUDE_I264_COMMON_BITS_H_
+#define MODULES_COMMON_INCLUDE_I264_COMMON_BITS_H_
 
 #include <array>
 #include <cstring>
 #include <exception>
-#include <iostream>
 #include <limits>
 #include <type_traits>
 #include <vector>
@@ -39,10 +50,9 @@ namespace i264 {
  */
 template <class BUFFER_ELEMENT_TYPE = unsigned char, bool MSB_TO_LSB = true,
           class = typename std::enable_if<
-            std::is_unsigned<BUFFER_ELEMENT_TYPE>::value>::type>
-class Bit
-{
-public:
+              std::is_unsigned<BUFFER_ELEMENT_TYPE>::value>::type>
+class Bit {
+ public:
   typedef BUFFER_ELEMENT_TYPE value_type;
   typedef BUFFER_ELEMENT_TYPE& reference;
   typedef const BUFFER_ELEMENT_TYPE& const_reference;
@@ -55,21 +65,18 @@ public:
   static const size_t VALUE_TYPE_BTYE_SIZE = sizeof(value_type);
   static const size_t VALUE_TYPE_BIT_SIZE = 8 * sizeof(value_type);
 
-public:
-  struct BitHolder
-  {
+ public:
+  struct BitHolder {
     size_type bit_position_ = 0;
     container_type* container_ = nullptr;
 
-    BitHolder& CopyValueFrom(const BitHolder& value)
-    {
+    BitHolder& CopyValueFrom(const BitHolder& value) {
       bit_position_ = value.bit_position_;
       container_ = value.container_;
       return *this;
     }
 
-    BitHolder& AssignValue(value_type value)
-    {
+    BitHolder& AssignValue(value_type value) {
       size_type byte_position = bit_position_ / VALUE_TYPE_BIT_SIZE;
       size_type bit_position = bit_position_ % VALUE_TYPE_BIT_SIZE;
 
@@ -86,23 +93,19 @@ public:
 
     BitHolder& operator=(value_type value) { return AssignValue(value); }
 
-    BitHolder& operator=(const BitHolder& value)
-    {
+    BitHolder& operator=(const BitHolder& value) {
       return AssignValue(value.Value());
     }
 
-    bool operator==(const BitHolder& bit) const
-    {
+    bool operator==(const BitHolder& bit) const {
       return bit_position_ == bit.bit_position_;
     }
 
-    bool operator!=(const BitHolder& bit) const
-    {
+    bool operator!=(const BitHolder& bit) const {
       return bit_position_ != bit.bit_position_;
     }
 
-    value_type Value() const
-    {
+    value_type Value() const {
       size_type byte_position = bit_position_ / VALUE_TYPE_BIT_SIZE;
       size_type bit_position = bit_position_ % VALUE_TYPE_BIT_SIZE;
       value_type byte = (*container_)[byte_position];
@@ -110,50 +113,42 @@ public:
     }
   };
 
-public:
+ public:
   template <class A, bool B, class C>
   friend Bit<A, B, C> operator+(const Bit<A, B, C>& lhs,
                                 const Bit<A, B, C>& rhs);
 
-private:
-  static constexpr value_type CreateBitPattern(size_t i)
-  {
+ private:
+  static constexpr value_type CreateBitPattern(size_t i) {
     return ONE << (MSB_TO_LSB ? (VALUE_TYPE_BIT_SIZE - 1) - i : i);
   }
 
   template <size_t... i>
-  static constexpr auto CreateBitPattern(std::index_sequence<i...>)
-  {
-    return std::array<value_type, sizeof...(i)>{ { CreateBitPattern(i)... } };
+  static constexpr auto CreateBitPattern(std::index_sequence<i...>) {
+    return std::array<value_type, sizeof...(i)>{{CreateBitPattern(i)...}};
   }
 
-  static constexpr auto CreateBitPattern()
-  {
+  static constexpr auto CreateBitPattern() {
     return CreateBitPattern(std::make_index_sequence<VALUE_TYPE_BIT_SIZE>{});
   }
 
-  static constexpr value_type create_mask_pattern(size_t i)
-  {
+  static constexpr value_type create_mask_pattern(size_t i) {
     value_type mask = ZERO;
-    for (size_t d = 0; d <= i; d++)
-      mask |= CreateBitPattern(d);
+    for (size_t d = 0; d <= i; d++) mask |= CreateBitPattern(d);
     return mask;
   }
 
   template <size_t... i>
-  static constexpr auto CreateMaskPatternArray(std::index_sequence<i...>)
-  {
-    return std::array<value_type, sizeof...(i)>{ { create_mask_pattern(
-      i)... } };
+  static constexpr auto CreateMaskPatternArray(std::index_sequence<i...>) {
+    return std::array<value_type, sizeof...(i)>{{create_mask_pattern(i)...}};
   }
 
-  static constexpr auto CreateMaskPatternArray()
-  {
+  static constexpr auto CreateMaskPatternArray() {
     return CreateMaskPatternArray(
-      std::make_index_sequence<VALUE_TYPE_BIT_SIZE>{});
+        std::make_index_sequence<VALUE_TYPE_BIT_SIZE>{});
   }
 
-private:
+ private:
   /**
    * @brief BIT_PATTERNS are
    * For example (BUFFER_ELEMENT_TYPE=uint8_t)
@@ -183,15 +178,14 @@ private:
 
   template <bool IsConst>
   class BaseIterator
-    : public std::iterator<std::forward_iterator_tag, BitHolder>
-  {
-  public:
+      : public std::iterator<std::forward_iterator_tag, BitHolder> {
+   public:
     using difference_type = typename BaseIterator::difference_type;
 
-  public:
+   public:
     friend BaseIterator<!IsConst>;
 
-  public:
+   public:
     explicit BaseIterator(BitHolder x) { p.CopyValueFrom(x); }
 
     BaseIterator(const BaseIterator<true>& it) { p.CopyValueFrom(it.p); }
@@ -199,69 +193,64 @@ private:
     BaseIterator(const BaseIterator<false>& it) { p.CopyValueFrom(it.p); }
 
     BaseIterator<IsConst>& operator=(
-      const BaseIterator<true>& it) // prefix increment
+        const BaseIterator<true>& it)  // prefix increment
     {
       p.CopyValueFrom(it.p);
       return *this;
     }
 
     BaseIterator<IsConst>& operator=(
-      const BaseIterator<false>& it) // prefix increment
+        const BaseIterator<false>& it)  // prefix increment
     {
       p.CopyValueFrom(it.p);
       return *this;
     }
 
-    BaseIterator<IsConst>& operator++() // prefix increment
+    BaseIterator<IsConst>& operator++()  // prefix increment
     {
       ++(p.bit_position_);
       return *this;
     }
 
-    BaseIterator<IsConst> operator++(int) // postfix increment
+    BaseIterator<IsConst> operator++(int)  // postfix increment
     {
       BaseIterator<IsConst> tmp(*this);
       operator++();
       return tmp;
     }
 
-    BaseIterator operator+(difference_type n) const
-    {
-      return BaseIterator{ BitHolder{ p.bit_position_ + n, p.container_ } };
+    BaseIterator operator+(difference_type n) const {
+      return BaseIterator{BitHolder{p.bit_position_ + n, p.container_}};
     }
 
-    BaseIterator operator-(difference_type n) const
-    {
-      return BaseIterator{ BitHolder{ p.bit_position_ - n, p.container_ } };
+    BaseIterator operator-(difference_type n) const {
+      return BaseIterator{BitHolder{p.bit_position_ - n, p.container_}};
     }
 
     template <bool T>
-    bool operator==(const BaseIterator<T>& rhs) const
-    {
+    bool operator==(const BaseIterator<T>& rhs) const {
       return p == rhs.p;
     }
 
     template <bool T>
-    bool operator!=(const BaseIterator<T>& rhs) const
-    {
+    bool operator!=(const BaseIterator<T>& rhs) const {
       return p != rhs.p;
     }
 
     typename std::conditional<IsConst, const BitHolder&, BitHolder&>::type
-    operator*()
-    {
+    operator*() {
       return p;
     }
 
-  private:
+   private:
     BitHolder p;
   };
 
-public:
+ public:
   typedef BaseIterator<false> Iterator;
   typedef BaseIterator<true> ConstIterator;
 
-public:
+ public:
   // constructor
   Bit();
 
@@ -330,7 +319,7 @@ public:
 
   void Clear() noexcept;
 
-private:
+ private:
   inline void PushWithResize(value_type value);
   inline void PopWithResize();
   inline value_type BitValueAt(size_type position) const;
@@ -341,7 +330,7 @@ private:
   template <class IL_TYPE>
   inline void InitializeFrom(const std::initializer_list<IL_TYPE>& type);
 
-private:
+ private:
   container_type buffer_;
   value_type* last_byte_holder_ = nullptr;
   size_type next_bit_position_ = VALUE_TYPE_BIT_SIZE;
@@ -349,9 +338,8 @@ private:
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK> operator+(
-  const Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>& lhs,
-  const Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>& rhs)
-{
+    const Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>& lhs,
+    const Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>& rhs) {
   Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK> concat = lhs;
 
   if (concat.next_bit_position_ ==
@@ -363,8 +351,8 @@ Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK> operator+(
     std::memcpy(concat.buffer_.data() + buffer_count, rhs.Data(),
                 rhs.BufferElementCount());
   } else {
-    for (typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::size_type
-           i = 0;
+    for (typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::size_type i =
+             0;
          i < rhs.Size(); i++) {
       concat.Push(rhs[i]);
     }
@@ -374,29 +362,25 @@ Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK> operator+(
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Bit()
-{
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Bit() {
   Clear();
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Bit(size_type n)
-{
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Bit(size_type n) {
   Resize(n);
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Bit(size_type n,
-                                                     const value_type& val)
-{
+                                                     const value_type& val) {
   Resize(n, val);
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 template <class InputIterator>
 Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Bit(InputIterator first,
-                                                     InputIterator last)
-{
+                                                     InputIterator last) {
   auto it = first;
   while (it != last) {
     Push((*it).Value());
@@ -405,33 +389,29 @@ Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Bit(InputIterator first,
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Bit(const Bit& x)
-{
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Bit(const Bit& x) {
   *this = x;
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Bit(Bit&& x)
-{
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Bit(Bit&& x) {
   *this = std::move(x);
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 template <class IL_TYPE>
 Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Bit(
-  std::initializer_list<IL_TYPE> il)
-{
+    std::initializer_list<IL_TYPE> il) {
   InitializeFrom(il);
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Bit(const value_type* data,
-                                                     size_type size)
-{
+                                                     size_type size) {
   Resize(size);
   std::memcpy(buffer_.data(), data,
               VALUE_TYPE_BTYE_SIZE * (size + VALUE_TYPE_BIT_SIZE - 1) /
-                VALUE_TYPE_BIT_SIZE);
+                  VALUE_TYPE_BIT_SIZE);
 
   // clean up tail if necessary
   if (next_bit_position_ != VALUE_TYPE_BIT_SIZE) {
@@ -440,14 +420,11 @@ Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Bit(const value_type* data,
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::~Bit()
-{
-}
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::~Bit() {}
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>&
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::operator=(const Bit& x)
-{
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::operator=(const Bit& x) {
   buffer_ = x.buffer_;
   last_byte_holder_ = &(buffer_.back());
   next_bit_position_ = x.next_bit_position_;
@@ -456,8 +433,7 @@ Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::operator=(const Bit& x)
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>&
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::operator=(Bit&& x)
-{
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::operator=(Bit&& x) {
   buffer_ = std::move(x.buffer_);
   last_byte_holder_ = x.last_byte_holder_;
   next_bit_position_ = x.next_bit_position_;
@@ -470,48 +446,42 @@ template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 template <class IL_TYPE>
 Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>&
 Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::operator=(
-  std::initializer_list<IL_TYPE> il)
-{
+    std::initializer_list<IL_TYPE> il) {
   InitializeFrom(il);
   return *this;
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Iterator
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::begin()
-{
-  return Iterator(BitHolder{ 0, &buffer_ });
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::begin() {
+  return Iterator(BitHolder{0, &buffer_});
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Iterator
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::end()
-{
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::end() {
   return Iterator(
-    BitHolder{ (buffer_.size() - 1) * VALUE_TYPE_BIT_SIZE + next_bit_position_,
-               &buffer_ });
+      BitHolder{(buffer_.size() - 1) * VALUE_TYPE_BIT_SIZE + next_bit_position_,
+                &buffer_});
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::ConstIterator
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::begin() const
-{
-  return ConstIterator(BitHolder{ 0, &buffer_ });
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::begin() const {
+  return ConstIterator(BitHolder{0, &buffer_});
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::ConstIterator
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::end() const
-{
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::end() const {
   return ConstIterator(
-    BitHolder{ (buffer_.size() - 1) * VALUE_TYPE_BIT_SIZE + next_bit_position_,
-               &buffer_ });
+      BitHolder{(buffer_.size() - 1) * VALUE_TYPE_BIT_SIZE + next_bit_position_,
+                &buffer_});
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::PushWithResize(
-  value_type value)
-{
+    value_type value) {
   if ((value != ZERO) && (value != ONE)) {
     throw std::invalid_argument("input argument is not one or zero.");
   }
@@ -525,15 +495,14 @@ void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::PushWithResize(
 
   if (value == ONE) {
     *(last_byte_holder_) =
-      *(last_byte_holder_) | BIT_PATTERNS[next_bit_position_];
+        *(last_byte_holder_) | BIT_PATTERNS[next_bit_position_];
   }
 
   next_bit_position_++;
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
-void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::PopWithResize()
-{
+void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::PopWithResize() {
   if (next_bit_position_ == 0) {
     if (buffer_.size() > 1) {
       buffer_.pop_back();
@@ -546,8 +515,7 @@ void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::PopWithResize()
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
-void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Clear() noexcept
-{
+void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Clear() noexcept {
   buffer_.clear();
   next_bit_position_ = VALUE_TYPE_BIT_SIZE;
 }
@@ -555,8 +523,7 @@ void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Clear() noexcept
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::value_type
 Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::BitValueAt(
-  size_type position) const
-{
+    size_type position) const {
   if (position >=
       (buffer_.size() - 1) * VALUE_TYPE_BIT_SIZE + next_bit_position_) {
     throw std::out_of_range("bit query position is out of range.");
@@ -568,8 +535,7 @@ Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::BitValueAt(
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::value_type
 Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::BitValue(
-  size_type position) const
-{
+    size_type position) const {
   size_type byte_position = position / VALUE_TYPE_BIT_SIZE;
   size_type bit_position = position % VALUE_TYPE_BIT_SIZE;
   value_type byte = buffer_.operator[](byte_position);
@@ -578,23 +544,20 @@ Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::BitValue(
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::size_type
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::BitCount() const noexcept
-{
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::BitCount() const noexcept {
   return (buffer_.size() - 1) * VALUE_TYPE_BIT_SIZE + next_bit_position_;
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::size_type
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::BitRemainder() noexcept
-{
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::BitRemainder() noexcept {
   return VALUE_TYPE_BIT_SIZE - next_bit_position_;
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 template <class IL_TYPE>
 void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::InitializeFrom(
-  const std::initializer_list<IL_TYPE>& il)
-{
+    const std::initializer_list<IL_TYPE>& il) {
   Resize(il.size());
 
   size_type i = 0;
@@ -611,32 +574,27 @@ void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::InitializeFrom(
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::size_type
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Size() const noexcept
-{
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Size() const noexcept {
   return BitCount();
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
-void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Reserve(size_type n)
-{
+void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Reserve(size_type n) {
   buffer_.reserve((n + VALUE_TYPE_BIT_SIZE - 1) / VALUE_TYPE_BIT_SIZE);
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
-void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Resize(size_type n)
-{
+void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Resize(size_type n) {
   buffer_.resize((n + VALUE_TYPE_BIT_SIZE - 1) / VALUE_TYPE_BIT_SIZE);
-  if (n != 0)
-    last_byte_holder_ = &(buffer_.back());
+  if (n != 0) last_byte_holder_ = &(buffer_.back());
   next_bit_position_ = (n % VALUE_TYPE_BIT_SIZE) == 0
-    ? VALUE_TYPE_BIT_SIZE
-    : (n % VALUE_TYPE_BIT_SIZE);
+                           ? VALUE_TYPE_BIT_SIZE
+                           : (n % VALUE_TYPE_BIT_SIZE);
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Resize(
-  size_type n, const value_type& value)
-{
+    size_type n, const value_type& value) {
   if ((value != ZERO) && (value != ONE)) {
     throw std::invalid_argument("input argument is not one or zero.");
   }
@@ -644,106 +602,91 @@ void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Resize(
   const value_type element_value = value == ONE ? VALUE_MAX : ZERO;
   buffer_.resize((n + VALUE_TYPE_BIT_SIZE - 1) / VALUE_TYPE_BIT_SIZE,
                  element_value);
-  if (n != 0)
-    last_byte_holder_ = &(buffer_.back());
+  if (n != 0) last_byte_holder_ = &(buffer_.back());
   next_bit_position_ = (n % VALUE_TYPE_BIT_SIZE) == 0
-    ? VALUE_TYPE_BIT_SIZE
-    : (n % VALUE_TYPE_BIT_SIZE);
+                           ? VALUE_TYPE_BIT_SIZE
+                           : (n % VALUE_TYPE_BIT_SIZE);
 
   // keep unused bits zero
-  if (n != 0)
-    *last_byte_holder_ &= MASK_PATTERNS[next_bit_position_ - 1];
+  if (n != 0) *last_byte_holder_ &= MASK_PATTERNS[next_bit_position_ - 1];
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::size_type
 Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::BufferElementCount() const
-  noexcept
-{
+    noexcept {
   return buffer_.size();
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::size_type
 Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::BufferElementSize() const
-  noexcept
-{
+    noexcept {
   return VALUE_TYPE_BTYE_SIZE;
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
-bool Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Empty() const noexcept
-{
+bool Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Empty() const noexcept {
   return BitCount() == 0;
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::value_type
-  Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::operator[](
-    size_type n) const
-{
+    Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::operator[](
+        size_type n) const {
   return BitValue(n);
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::value_type
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::At(size_type n) const
-{
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::At(size_type n) const {
   return BitValueAt(n);
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::value_type
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Front() const noexcept
-{
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Front() const noexcept {
   return (MSB_TO_LSB ? buffer_[0] >> (VALUE_TYPE_BIT_SIZE - 1) : buffer_[0]) &
-    ONE;
+         ONE;
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::value_type
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Back() const noexcept
-{
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Back() const noexcept {
   return BitValue(BitCount() - 1);
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 const typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::value_type*
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Data() const noexcept
-{
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Data() const noexcept {
   return buffer_.data();
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::value_type*
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Data() noexcept
-{
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Data() noexcept {
   return buffer_.data();
 }
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
-void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Push(value_type value)
-{
+void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Push(value_type value) {
   PushWithResize(value);
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Push(
-  const BIT_CONTAINER_TYPE* data, size_type nbits)
-{
+    const BIT_CONTAINER_TYPE* data, size_type nbits) {
   Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK> tmp(data, nbits);
   *this = *this + tmp;
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
-void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Pop()
-{
+void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Pop() {
   PopWithResize();
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Replace(
-  size_type position, value_type value)
-{
+    size_type position, value_type value) {
   size_type byte_position = position / VALUE_TYPE_BIT_SIZE;
   size_type bit_position = position % VALUE_TYPE_BIT_SIZE;
 
@@ -757,8 +700,7 @@ void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Replace(
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
-void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Align(value_type value)
-{
+void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Align(value_type value) {
   int b = 0;
   while (next_bit_position_ != VALUE_TYPE_BIT_SIZE) {
     Push((value & BIT_PATTERNS[b]) == ZERO ? ZERO : ONE);
@@ -768,13 +710,12 @@ void Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Align(value_type value)
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Iterator
-Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Erase(ConstIterator position)
-{
+Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Erase(ConstIterator position) {
   if (position != end()) {
     typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Iterator result =
-      position;
+        position;
     typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Iterator first =
-      position;
+        position;
     first++;
 
     Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::size_type moved_bits = 0;
@@ -802,4 +743,6 @@ Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Erase(ConstIterator position)
 //   std::vector<uint8_t>::iterator s, t, k;
 //   k = s - t;
 // }
-}
+}  // namespace i264
+
+#endif  // MODULES_COMMON_INCLUDE_I264_COMMON_BITS_H_

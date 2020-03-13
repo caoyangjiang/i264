@@ -9,13 +9,18 @@
  *
  */
 
+#include "i264/encoder/gop_encoder.h"
+
+#include "i264/common/types.h"
+#include "i264/encoder/encoder.h"
+
 namespace i264 {
 
-GOPEncoder::GOPEncoder(Encoder& encoder) {
+GOPEncoder::GOPEncoder(Encoder& encoder) : encoder_(encoder) {
   // initialize frame encoder
 }
 
-bool GOPEncoder::Encode(int poc, const Frame& frame, Bits& BitStream) {
+bool GOPEncoder::Encode(int poc, const Frame& frame, BitStream& bit_stream) {
   // determine this frame nalu type
 
   // configure frame encoder for this frame

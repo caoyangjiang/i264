@@ -9,9 +9,27 @@ if(MSVC)
   set(ENABLE "__pragma(warning(pop))")
 endif()
 
-set(PROJECT_SRCS ${PROJECT_SOURCE_DIR}/src/common.cpp)
+set(PROJECT_INCS
+    ${PROJECT_SOURCE_DIR}/include/i264/common/access_unit.h
+    ${PROJECT_SOURCE_DIR}/include/i264/common/annexb.h
+    ${PROJECT_SOURCE_DIR}/include/i264/common/base.h
+    ${PROJECT_SOURCE_DIR}/include/i264/common/bit_stream.h
+    ${PROJECT_SOURCE_DIR}/include/i264/common/bits.h
+    ${PROJECT_SOURCE_DIR}/include/i264/common/cabac.h
+    ${PROJECT_SOURCE_DIR}/include/i264/common/common.h
+    ${PROJECT_SOURCE_DIR}/include/i264/common/frame.h
+    ${PROJECT_SOURCE_DIR}/include/i264/common/global.h
+    ${PROJECT_SOURCE_DIR}/include/i264/common/macroblock.h
+    ${PROJECT_SOURCE_DIR}/include/i264/common/parameter_set.h
+    ${PROJECT_SOURCE_DIR}/include/i264/common/slice.h
+    ${PROJECT_SOURCE_DIR}/include/i264/common/transform.h
+    ${PROJECT_SOURCE_DIR}/include/i264/common/types.h
+    ${PROJECT_SOURCE_DIR}/include/i264/common/yuv.h)
 
-set(PROJECT_INCS ${PROJECT_SOURCE_DIR}/include/i264/common/common.h)
+set(PROJECT_SRCS
+    ${PROJECT_SOURCE_DIR}/src/common.cpp
+    ${PROJECT_SOURCE_DIR}/src/macroblock.cpp
+    ${PROJECT_SOURCE_DIR}/src/parameter_set.cpp)
 
 source_group("include" FILES ${PROJECT_INCS})
 source_group("src" FILES ${PROJECT_SRCS})
@@ -20,31 +38,34 @@ add_library(${PROJECT_NAME} SHARED ${PROJECT_SRCS} ${PROJECT_INCS})
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
-target_compile_definitions(
-  ${PROJECT_NAME} PUBLIC WINDOWS_DISABLE_ALL_WARNING=${DISABLE}
-  WINDOWS_ENABLE_ALL_WARNING=${ENABLE})
+target_compile_definitions(${PROJECT_NAME}
+                           PUBLIC
+                           WINDOWS_DISABLE_ALL_WARNING=${DISABLE}
+                           WINDOWS_ENABLE_ALL_WARNING=${ENABLE})
 
 target_compile_definitions(${PROJECT_NAME} INTERFACE
                            I264_COMMON_DLL=${DLLIMPORT})
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE I264_COMMON_DLL=${DLLEXPORT})
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+                           I264_COMMON_DLL=${DLLEXPORT})
 
 target_include_directories(
-  ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                         $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>)
+  ${PROJECT_NAME}
+  PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+         $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>)
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER
-                                             ${CMAKE_PROJECT_NAME}/modules)
+set_property(TARGET ${PROJECT_NAME}
+             PROPERTY FOLDER ${CMAKE_PROJECT_NAME}/modules)
 
-install(
-  TARGETS ${PROJECT_NAME}
-  EXPORT ${CMAKE_PROJECT_NAME}Targets
-  ARCHIVE DESTINATION lib COMPONENT install-app
-  LIBRARY DESTINATION lib COMPONENT install-app
-  RUNTIME DESTINATION bin COMPONENT install-app)
+install(TARGETS ${PROJECT_NAME}
+        EXPORT ${CMAKE_PROJECT_NAME}Targets
+        ARCHIVE DESTINATION lib COMPONENT install-app
+        LIBRARY DESTINATION lib COMPONENT install-app
+        RUNTIME DESTINATION bin COMPONENT install-app)
 
 install(FILES ${PROJECT_SOURCE_DIR}/include/i264/common/common.h
         DESTINATION include/i264/common)
 
-export(TARGETS ${PROJECT_NAME} APPEND
+export(TARGETS ${PROJECT_NAME}
+       APPEND
        FILE ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}Targets.cmake)

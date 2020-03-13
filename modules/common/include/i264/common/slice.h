@@ -9,6 +9,9 @@
  *
  */
 
+#ifndef MODULES_COMMON_INCLUDE_I264_COMMON_SLICE_H_
+#define MODULES_COMMON_INCLUDE_I264_COMMON_SLICE_H_
+
 namespace i264 {
 
 class Slice {
@@ -16,3 +19,5 @@ class Slice {
  private:
 };
 }  // namespace i264
+
+#endif  // MODULES_COMMON_INCLUDE_I264_COMMON_SLICE_H_

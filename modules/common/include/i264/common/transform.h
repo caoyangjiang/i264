@@ -9,6 +9,9 @@
  *
  */
 
+#ifndef MODULES_COMMON_INCLUDE_I264_COMMON_TRANSFORM_H_
+#define MODULES_COMMON_INCLUDE_I264_COMMON_TRANSFORM_H_
+
 #include "i264/common/types.h"
 
 namespace i264 {
@@ -45,3 +48,5 @@ class HadamardTransform {
 };
 
 }  // namespace i264
+
+#endif  // MODULES_COMMON_INCLUDE_I264_COMMON_TRANSFORM_H_

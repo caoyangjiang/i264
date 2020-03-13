@@ -9,6 +9,9 @@
  *
  */
 
+#ifndef MODULES_ENCODER_INCLUDE_I264_ENCODER_ENCODER_CFG_H_
+#define MODULES_ENCODER_INCLUDE_I264_ENCODER_ENCODER_CFG_H_
+
 namespace i264 {
 
 class EncoderCfg {
@@ -135,3 +138,5 @@ class EncoderCfg {
   std::array<int, 5> rate_control_max_qp_ = {51, 51, 51, 51, 51};
 };
 }  // namespace i264
+
+#endif  // MODULES_ENCODER_INCLUDE_I264_ENCODER_ENCODER_CFG_H_

@@ -9,9 +9,22 @@ if(MSVC)
   set(ENABLE "__pragma(warning(pop))")
 endif()
 
-set(PROJECT_SRCS ${PROJECT_SOURCE_DIR}/src/common.cpp)
+set(PROJECT_SRCS
+    ${PROJECT_SOURCE_DIR}/src/encoder.cpp
+    ${PROJECT_SOURCE_DIR}/src/gop_encoder.cpp
+    ${PROJECT_SOURCE_DIR}/src/macroblock_encoder.cpp
+    ${PROJECT_SOURCE_DIR}/src/slice_encoder.cpp)
 
-set(PROJECT_INCS ${PROJECT_SOURCE_DIR}/include/i264/encoder/common.h)
+set(PROJECT_INCS
+    ${PROJECT_SOURCE_DIR}/include/i264/encoder/encoder.h
+    ${PROJECT_SOURCE_DIR}/include/i264/encoder/encoder_cfg.h
+    ${PROJECT_SOURCE_DIR}/include/i264/encoder/gop_encoder.h
+    ${PROJECT_SOURCE_DIR}/include/i264/encoder/intra_4x4.h
+    ${PROJECT_SOURCE_DIR}/include/i264/encoder/intra_8x8.h
+    ${PROJECT_SOURCE_DIR}/include/i264/encoder/intra_16x16.h
+    ${PROJECT_SOURCE_DIR}/include/i264/encoder/macroblock_encoder.h
+    ${PROJECT_SOURCE_DIR}/include/i264/encoder/rate_control.h
+    ${PROJECT_SOURCE_DIR}/include/i264/encoder/slice_encoder.h)
 
 source_group("include" FILES ${PROJECT_INCS})
 source_group("src" FILES ${PROJECT_SRCS})
@@ -35,6 +48,8 @@ target_include_directories(
   ${PROJECT_NAME}
   PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
          $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE i264_common)
 
 set_property(TARGET ${PROJECT_NAME}
              PROPERTY FOLDER ${CMAKE_PROJECT_NAME}/modules)

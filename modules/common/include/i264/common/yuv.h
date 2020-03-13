@@ -1,13 +1,24 @@
-// Copyright 2020 Caoyang Jiang
+/**
+ * @file yuv.h
+ * @author Caoyang Jiang (www.hypevr.com)
+ * @brief
+ * @version 0.1
+ * @date 2020-03-13
+ *
+ * @copyright Copyright (c) 2020
+ *
+ */
+
+#ifndef MODULES_COMMON_INCLUDE_I264_COMMON_YUV_H_
+#define MODULES_COMMON_INCLUDE_I264_COMMON_YUV_H_
 
 #include <array>
 #include <cstdint>
 #include <memory>
 
 namespace i264 {
-class YuvImage
-{
-public:
+class YuvImage {
+ public:
   YuvImage(int width, int height);
   YuvImage(int width, int height, const uint8_t* buffer);
 
@@ -25,9 +36,11 @@ public:
 
   std::array<uint8_t*, 3> GetYuv(int x, int y) const;
 
-private:
+ private:
   std::shared_ptr<uint8_t[]> buffer_ = nullptr;
   int width_ = 0;
   int height_ = 0;
 };
-}
+}  // namespace i264
+
+#endif  // MODULES_COMMON_INCLUDE_I264_COMMON_YUV_H_

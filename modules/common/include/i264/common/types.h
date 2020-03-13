@@ -9,6 +9,9 @@
  *
  */
 
+#ifndef MODULES_COMMON_INCLUDE_I264_COMMON_TYPES_H_
+#define MODULES_COMMON_INCLUDE_I264_COMMON_TYPES_H_
+
 #include "i264/common/bits.h"
 
 namespace i264 {
@@ -96,10 +99,10 @@ enum class INTRA_4x4_MODE {
 };
 
 enum class NEIGHBOR_MB_POS {
-  TOP = 0;        // known as "A"
-  TOP_RIGHT = 1;  // known as "B"
-  LEFT = 2;       // known as "C"
-  TOP_LEFT = 3;
+  TOP = 0,        // known as "A"
+  TOP_RIGHT = 1,  // known as "B"
+  LEFT = 2,       // known as "C"
+  TOP_LEFT = 3,
 };
 
 /**
@@ -107,7 +110,7 @@ enum class NEIGHBOR_MB_POS {
  *
  */
 template <class T, int D1, int D2>
-using Array2D = std::array<sd::array<T, D1>, D2>;
+using Array2D = std::array<std::array<T, D2>, D1>;
 
 template <class T, int D1>
 using Array1D = std::array<T, D1>;
@@ -116,6 +119,8 @@ using Array1D = std::array<T, D1>;
  * @brief BitStream is more appropriate type name in H.264 context
  *
  */
-using BitStream = Bit;
+using BitStream = Bit<unsigned char>;
 
 }  // namespace i264
+
+#endif  // MODULES_COMMON_INCLUDE_I264_COMMON_TYPES_H_

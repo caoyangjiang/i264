@@ -9,6 +9,9 @@
  *
  */
 
+#ifndef MODULES_COMMON_INCLUDE_I264_COMMON_PARAMETER_SET_H_
+#define MODULES_COMMON_INCLUDE_I264_COMMON_PARAMETER_SET_H_
+
 #include <cstdint>
 #include <map>
 #include <optional>
@@ -56,11 +59,11 @@ struct SPS {
   uint32_t num_ref_frames_in_pic_order_cnt_cycle = 0;  // ue(v)
   std::array<int, 256> offset_for_ref_frame;           // se(v)
 
-  uint32_t max_num_ref_frames = 0;                  // ue(v)
-  bool gaps_in_frame_num_value_allowed_flag = = 0;  // u(1)
-  uint32_t pic_width_in_mbs_minus1 = 0;             // ue(v)
-  uint32_t pic_height_in_map_units_minus1 = 0;      // ue(v)
-  bool frame_mbs_only_flag = 0;                     // u(1)
+  uint32_t max_num_ref_frames = 0;                // ue(v)
+  bool gaps_in_frame_num_value_allowed_flag = 0;  // u(1)
+  uint32_t pic_width_in_mbs_minus1 = 0;           // ue(v)
+  uint32_t pic_height_in_map_units_minus1 = 0;    // ue(v)
+  bool frame_mbs_only_flag = 0;                   // u(1)
 
   bool mb_adaptive_frame_field_flag = 0;  // u(1)
   bool direct_8x8_inference_flag = 0;     // u(1)
@@ -137,13 +140,15 @@ class ParameterSetMap {
   };
 
  public:
-  ParameterSet() = default;
-  ~ParameterSet() = default;
-
+  ParameterSetMap() = default;
+  ~ParameterSetMap() = default;
   explicit ParameterSetMap(int max_entry);
-  bool SetParameterSet(int parameter_set_id, const T& parameter_set);
-  bool SetParameterSet(int parameter_set_id, const T& parameter_set,
-                       const std::vector<uint8_t>> &nal_data);
+
+  bool SetParameterSet(int parameter_set_id,
+                       const ParameterSetType& parameter_set);
+  bool SetParameterSet(int parameter_set_id,
+                       const ParameterSetType& parameter_set,
+                       const std::vector<uint8_t>& nal_data);
   ParameterSetType& GetParameterSet(int index);
   const ParameterSetType& GetParameterSet(int index) const;
   bool HasParameterSet(int parameter_set_id) const;
@@ -164,29 +169,32 @@ ParameterSetMap<ParameterSetType>::ParameterSetMap(int max_entry) {
 
 template <class ParameterSetType>
 bool ParameterSetMap<ParameterSetType>::SetParameterSet(
-    int parameter_set_id, const T& parameter_set) {
+    int parameter_set_id, const ParameterSetType& parameter_set) {
   auto exist = HasParameterSet(parameter_set_id);
-  parameter_set_map_[parameter_set_id] = parameter_set;
+  parameter_set_map_[parameter_set_id].parameter_set = parameter_set;
   parameter_set_map_[parameter_set_id].changed = exist;
+  return exist;
 }
 
 template <class ParameterSetType>
 bool ParameterSetMap<ParameterSetType>::SetParameterSet(
-    int parameter_set_id, const T& parameter_set,
+    int parameter_set_id, const ParameterSetType& parameter_set,
     const std::vector<uint8_t>& nal_data) {
-  SetParameterSet(paramter_Set_index, paramter_set);
+  auto exist = SetParameterSet(parameter_set_id, parameter_set);
   parameter_set_map_[parameter_set_id].nalu_data = nal_data;
+  return exist;
 }
 
 template <class ParameterSetType>
-ParameterSetType& ParameterSetMap<ParaeterSetType>::GetParameterSet(int index) {
-  return parameter_set_map_.at(index);
+ParameterSetType& ParameterSetMap<ParameterSetType>::GetParameterSet(
+    int index) {
+  return parameter_set_map_.at(index).parameter_set.value();
 }
 
 template <class ParameterSetType>
 const ParameterSetType& ParameterSetMap<ParameterSetType>::GetParameterSet(
     int index) const {
-  return parameter_set_map_.at(index);
+  return parameter_set_map_.at(index).parameter_set.value();
 }
 
 template <class ParameterSetType>
@@ -202,13 +210,13 @@ bool ParameterSetMap<ParameterSetType>::HasParameterSetChanged(
 }
 
 template <class ParameterSetType>
-ParameterSetType& ParamterSetMap<ParameterSetType>::Front() {
-  return *(parameter_set_map_.begin());
+ParameterSetType& ParameterSetMap<ParameterSetType>::Front() {
+  return (*parameter_set_map_.begin()).second.parameter_set.value();
 }
 
 template <class ParameterSetType>
-ParameterSetType& ParamterSetMap<ParameterSetType>::Front() {
-  return *(parameter_set_map_.begin());
+const ParameterSetType& ParameterSetMap<ParameterSetType>::Front() const {
+  return (*parameter_set_map_.begin()).second.parameter_set.value();
 }
 
 class ParameterSetManager {
@@ -245,3 +253,5 @@ class ParameterSetManager {
 };
 
 }  // namespace i264
+
+#endif  // MODULES_COMMON_INCLUDE_I264_COMMON_PARAMETER_SET_H_

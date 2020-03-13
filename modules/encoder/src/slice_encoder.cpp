@@ -9,12 +9,4 @@
  *
  */
 
-namespace i264 {
-
-class SliceEncoder {
- public:
-  explicit SliceEncoder(FrameEncoder& frame_encoder);
-  bool Encode(Slice& slice);
-};
-
-}  // namespace i264
+namespace i264 {}  // namespace i264

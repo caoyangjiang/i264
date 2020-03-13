@@ -9,6 +9,9 @@
  *
  */
 
+#ifndef MODULES_ENCODER_INCLUDE_I264_ENCODER_CODER_H_
+#define MODULES_ENCODER_INCLUDE_I264_ENCODER_CODER_H_
+
 #include "i264/common/types.h"
 
 namespace i264 {
@@ -27,3 +30,5 @@ class Coder {
   Bits* bits_ = std::nullptr_t;
 };
 }  // namespace i264
+
+#endif  // MODULES_ENCODER_INCLUDE_I264_ENCODER_CODER_H_

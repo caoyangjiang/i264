@@ -12,7 +12,7 @@
 #include "i264/encoder/encoder.h"
 
 namespace i264 {
-Encoder::Encoder(const EncoderCfg& cfg) {
+Encoder::Encoder(const EncoderCfg& cfg) : cfg_(cfg) {
   // initialize gop encoder
 
   // initialize rate control
@@ -20,7 +20,7 @@ Encoder::Encoder(const EncoderCfg& cfg) {
   // ToBeDone: initialize RDO
 }
 
-bool Encoder::Encode(const Frame& frame, std::list<AccessUnit>& bit_stream) {
+void Encoder::Encode(const Frame& frame, std::list<AccessUnit>& bit_stream) {
   // call gop encoder encode
 
   // collect statistics

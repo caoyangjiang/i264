@@ -1,4 +1,16 @@
-// Copyright 2020 Caoyang Jiang
+/**
+ * @file frame.h
+ * @author Caoyang Jiang (www.hypevr.com)
+ * @brief
+ * @version 0.1
+ * @date 2020-03-13
+ *
+ * @copyright Copyright (c) 2020
+ *
+ */
+
+#ifndef MODULES_COMMON_INCLUDE_I264_COMMON_FRAME_H_
+#define MODULES_COMMON_INCLUDE_I264_COMMON_FRAME_H_
 
 #include <array>
 #include <cstdint>
@@ -67,3 +79,5 @@ class Frame {
   std::array<uint8_t*, 3> plane_;
 };
 }  // namespace i264
+
+#endif  // MODULES_COMMON_INCLUDE_I264_COMMON_FRAME_H_

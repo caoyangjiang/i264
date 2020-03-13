@@ -9,6 +9,9 @@
  *
  */
 
+#ifndef MODULES_COMMON_INCLUDE_I264_COMMON_ACCESS_UNIT_H_
+#define MODULES_COMMON_INCLUDE_I264_COMMON_ACCESS_UNIT_H_
+
 #include "i264/common/types.h"
 
 namespace i264 {
@@ -42,3 +45,5 @@ class AccessUnit {
   std::list<OutputNALUnit> nals_;
 };
 }  // namespace i264
+
+#endif  // MODULES_COMMON_INCLUDE_I264_COMMON_ACCESS_UNIT_H_
