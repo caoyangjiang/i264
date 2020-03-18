@@ -30,18 +30,49 @@ enum class ColorFormat {
 
 class FrameBuffer {
  public:
+  struct SubSampling {
+    int width_down_sample_ratio = 1;
+    int height_down_sample_ratio = 1;
+  };
+
+ public:
   FrameBuffer() = default;
   ~FrameBuffer() = default;
 
-  FrameBuffer(int width, int height, int channel);
+  FrameBuffer(int width, int height, int channel,
+              std::vector<FrameBuffer::SubSampling> subsample_ratio);
 
-  uint8_t* Buffer(int channel);
-  const uint8_t* Buffer(int channel) const;
-  int Width(int channel) const;
-  int Height(int channel) const;
+  inline uint8_t* Buffer(int channel) {
+    return reinterpret_cast<uint8_t*>(buffer_[channel].get());
+  }
+
+  inline const uint8_t* Buffer(int channel) const {
+    return reinterpret_cast<const uint8_t*>(buffer_[channel].get());
+  }
+
+  inline int Width(int channel) const {
+    return width_ / channel_sub_sample_ratio_[channel].width_down_sample_ratio;
+  }
+
+  inline int Stride(int channel) const {
+    return stride_ / channel_sub_sample_ratio_[channel].width_down_sample_ratio;
+  }
+
+  inline int Height(int channel) const {
+    return height_ /
+           channel_sub_sample_ratio_[channel].height_down_sample_ratio;
+  }
+
+  inline int Channel() const { return channel_; }
 
  private:
-  std::shared_ptr<uint8_t[]> buffer_;
+  std::vector<std::shared_ptr<uint8_t[]>> buffer_;
+  std::vector<FrameBuffer::SubSampling> channel_sub_sample_ratio_;
+
+  int width_ = -1;
+  int height_ = -1;
+  int stride_ = -1;
+  int channel_ = -1;
 };
 
 class Frame {

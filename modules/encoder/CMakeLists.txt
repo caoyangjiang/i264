@@ -12,6 +12,7 @@ endif()
 set(PROJECT_SRCS
     ${PROJECT_SOURCE_DIR}/src/encoder.cpp
     ${PROJECT_SOURCE_DIR}/src/gop_encoder.cpp
+    ${PROJECT_SOURCE_DIR}/src/intra_16x16.cpp
     ${PROJECT_SOURCE_DIR}/src/macroblock_encoder.cpp
     ${PROJECT_SOURCE_DIR}/src/slice_encoder.cpp)
 
