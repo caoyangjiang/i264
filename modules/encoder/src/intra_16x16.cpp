@@ -147,13 +147,13 @@ bool Intra16x16Predictor::PlanePredict(
     // form H and V
     for (int i = 0; i <= 6; i++) {
       h = (i + 1) * (static_cast<int32_t>(top_row[8 + i]) -
-                     static_cast<int32_t>(top_row[8 - i]));
+                     static_cast<int32_t>(top_row[6 - i]));
 
       v = (i + 1) * (static_cast<int32_t>(left_column[8 + i]) -
-                     static_cast<int32_t>(left_column[8 - i]));
+                     static_cast<int32_t>(left_column[6 - i]));
     }
 
-    // take care when index is 7, it involves one pixel from top left row
+    // take care when index is X'=7, it involves one pixel from top left row
     h = 8 * (static_cast<int32_t>(top_row[15]) -
              static_cast<int32_t>(top_left_row[15]));
     v = 8 * (static_cast<int32_t>(left_column[15]) -
