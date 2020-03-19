@@ -54,6 +54,10 @@ class Intra16x16Predictor {
                            Array2D<uint8_t, 16, 16> &result);
 };
 
+class Intra16x16Distortion {
+ public:
+};
+
 }  // namespace i264
 
 #endif  // MODULES_ENCODER_INCLUDE_I264_ENCODER_INTRA_16X16_H_

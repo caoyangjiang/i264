@@ -109,8 +109,8 @@ enum class NEIGHBOR_MB_POS {
  * @brief Any two dimensional structure
  *
  */
-template <class T, int D1, int D2>
-using Array2D = std::array<std::array<T, D2>, D1>;
+template <class T, int ROWS, int COLUMNS>
+using Array2D = std::array<std::array<T, COLUMNS>, ROWS>;
 
 template <class T, int D1>
 using Array1D = std::array<T, D1>;
