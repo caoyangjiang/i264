@@ -9,6 +9,9 @@
  *
  */
 
+#ifndef MODULES_COMMON_INCLUDE_I264_COMMON_TRANSFORM_H_
+#define MODULES_COMMON_INCLUDE_I264_COMMON_TRANSFORM_H_
+
 #include "i264/common/types.h"
 
 namespace i264 {
@@ -59,10 +62,10 @@ class Transform {
    * @param first_trans_coeffs dct-transformed coefficients block
    * @param residual residual block
    */
-  template <int BLOCK_WIDTH, int BLOCK_HEIGHT>
+  template <unsigned long BLOCK_WIDTH, unsigned long BLOCK_HEIGHT>
   static void Inverse4x4Residual(
       const Array2D<int32_t, BLOCK_WIDTH, BLOCK_HEIGHT>& first_trans_coeffs,
-      Array2D<int8_t, BLOCK_WIDTH, BLOCK_HEIGHT>& residual);
+      Array2D<int32_t, BLOCK_WIDTH, BLOCK_HEIGHT>& residual);
 
   /**
    * @brief  This applies to the hadamard-transformed DC coefficients of a intra
@@ -91,6 +94,9 @@ template <unsigned long BLOCK_WIDTH, unsigned long BLOCK_HEIGHT>
 void Transform::Forward4x4Residual(
     const Array2D<int32_t, BLOCK_WIDTH, BLOCK_HEIGHT>& input,
     Array2D<int32_t, BLOCK_WIDTH, BLOCK_HEIGHT>& output) {
+  static_assert(BLOCK_WIDTH % 4 == 0, "Block width is not a multiple of 4 ");
+  static_assert(BLOCK_HEIGHT % 4 == 0, "Block height is not a multiple of 4 ");
+
   int block_count_x = BLOCK_WIDTH / 4;
   int block_count_y = BLOCK_HEIGHT / 4;
 
@@ -141,15 +147,78 @@ void Transform::Forward4x4Residual(
         output[pixel_y + i][pixel_x + 2] = g[i][0] - g[i][2];
         output[pixel_y + i][pixel_x + 3] = g[i][1] - (g[i][3] << 1);
       }
+    }
+  }
+}
+
+template <unsigned long BLOCK_WIDTH, unsigned long BLOCK_HEIGHT>
+void Transform::Inverse4x4Residual(
+    const Array2D<int32_t, BLOCK_WIDTH, BLOCK_HEIGHT>& input,
+    Array2D<int32_t, BLOCK_WIDTH, BLOCK_HEIGHT>& output) {
+  static_assert(BLOCK_WIDTH % 4 == 0, "Block width is not a multiple of 4 ");
+  static_assert(BLOCK_HEIGHT % 4 == 0, "Block height is not a multiple of 4 ");
+
+  int block_count_x = BLOCK_WIDTH / 4;
+  int block_count_y = BLOCK_HEIGHT / 4;
+
+  for (int blk_y = 0; blk_y < block_count_y; blk_y++) {
+    for (int blk_x = 0; blk_x < block_count_x; blk_x++) {
+      // transform for this 4x4 starts
+      int pixel_x = blk_x * 4;
+      int pixel_y = blk_y * 4;
+
+      // horizontal transform
+      // compute all e's
+      Array2D<int32_t, 4, 4> e;
+      for (int i = 0; i < 4; i++) {
+        e[0][i] =
+            input[pixel_y + 0][pixel_x + i] + input[pixel_y + 2][pixel_x + i];
+        e[1][i] =
+            input[pixel_y + 0][pixel_x + i] - input[pixel_y + 2][pixel_x + i];
+        e[2][i] = (input[pixel_y + 1][pixel_x + i] >> 1) -
+                  input[pixel_y + 3][pixel_x + i];
+        e[3][i] = input[pixel_y + 1][pixel_x + i] +
+                  (input[pixel_y + 3][pixel_x + i] >> 1);
+      }
+
+      // compute all f's
+      Array2D<int32_t, 4, 4> f;
+      for (int i = 0; i < 4; i++) {
+        f[0][i] = e[0][i] + e[3][i];
+        f[1][i] = e[1][i] + e[2][i];
+        f[2][i] = e[1][i] - e[2][i];
+        f[3][i] = e[0][i] - e[3][i];
+      }
+
+      // vertical transform
+      // compute all g's
+      Array2D<int32_t, 4, 4> g;
+      for (int i = 0; i < 4; i++) {
+        g[i][0] = f[i][0] + f[i][2];
+        g[i][1] = f[i][0] - f[i][2];
+        g[i][2] = (f[i][1] >> 1) - f[i][3];
+        g[i][3] = f[i][1] + (f[i][3] >> 1);
+      }
+
+      // compute all h's
+      Array2D<int32_t, 4, 4> h;
+      for (int i = 0; i < 4; i++) {
+        h[i][0] = g[i][0] + g[i][3];
+        h[i][1] = g[i][1] + g[i][2];
+        h[i][2] = g[i][1] - g[i][2];
+        h[i][3] = g[i][0] - g[i][3];
+      }
 
       // assign coefficents
-      // for (int i = 0; i < 4; i++) {
-      //   for (int j = 0; j < 4; j++) {
-      //     output[i][j] = (h[i][j] + (1 << 5)) >> 6;
-      //   }
-      // }
+      for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+          output[pixel_y + i][pixel_x + j] = (h[i][j] + (1 << 5)) >> 6;
+        }
+      }
     }
   }
 }
 
 }  // namespace i264
+
+#endif  // MODULES_COMMON_INCLUDE_I264_COMMON_TRANSFORM_H_
