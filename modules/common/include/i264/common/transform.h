@@ -43,6 +43,13 @@ class Transform {
    * @brief This applies to the DCT-transformed coefficients of a intra 16x16
    * macroblock for Luma component only.
    *
+   *  ouptut = H * input * H, (H is symmetrical)
+   *  where H is
+   *  1  1  1  1
+   *  1  1 -1 -1
+   *  1 -1 -1  1
+   *  1 -1  1 -1
+   *
    * @param first_trans_coeffs dct coefficients from the initial 4x4 transform
    * @param second_trans_dc_coeff hadamard transformed coefficients.
    */
@@ -53,6 +60,11 @@ class Transform {
   /**
    * @brief This applies to the DCT-transformed coefficients for Chroma
    * component only.
+   *
+   *  ouptut = H * input * H, (H is symmetrical)
+   *  where H is
+   *  1  1
+   *  1 -1
    *
    * @param first_trans_coeffs dct coefficients from the initial 4x4 transform
    * @param second_trans_dc_coeff hadamard tranformed coefficients.
@@ -87,6 +99,13 @@ class Transform {
    * @brief  This applies to the hadamard-transformed DC coefficients of a intra
    * 16x16 macroblock for luma component only.
    *
+   *  ouptut = H * input * H, (H is symmetrical)
+   *  where H is
+   *  1  1  1  1
+   *  1  1 -1 -1
+   *  1 -1 -1  1
+   *  1 -1  1 -1
+   *
    * @param second_trans_dc_coeff hadamard transformed coefficients.
    * @param first_trans_dc_coeff dct coefficients from the initial 4x4 transform
    */
@@ -97,6 +116,11 @@ class Transform {
   /**
    * @brief This applies to the hadamard-transformed DC coefficients for chroma
    * component only.
+   *
+   *  ouptut = H * input * H, (H is symmetrical)
+   *  where H is
+   *  1  1
+   *  1 -1
    *
    * @param second_trans_dc_coeff hadamard tranformed coefficients.
    * @param first_trans_dc_coeff dct coefficients from the initial 4x4 transform
@@ -334,6 +358,45 @@ void Transform::Inverse4x4LumaDC(const Array2D<int32_t, 4, 4>& input,
   }
 }
 
+void Transform::Forward2x2ChromaDC(const Array2D<int32_t, 8, 8>& input,
+                                   Array2D<int32_t, 2, 2>& output) {
+  // Defined in 8.5.11.1
+
+  // horizontal transform
+  // compute all e's
+  Array2D<int32_t, 2, 2> e;
+  for (int i = 0; i < 2; i++) {
+    e[0][i] = input[0][4 * i] + input[4][4 * i];
+    e[1][i] = input[0][4 * i] - input[4][4 * i];
+  }
+
+  // vertical transform
+  // compute all h's
+  for (int i = 0; i < 2; i++) {
+    output[i][0] = e[i][0] + e[i][1];
+    output[i][1] = e[i][0] - e[i][1];
+  }
+}
+
+void Transform::Inverse2x2ChromaDC(const Array2D<int32_t, 2, 2>& input,
+                                   Array2D<int32_t, 8, 8>& output) {
+  // Defined in 8.5.11.1
+
+  // horizontal transform
+  // compute all e's
+  Array2D<int32_t, 2, 2> e;
+  for (int i = 0; i < 2; i++) {
+    e[0][i] = input[0][i] + input[1][i];
+    e[1][i] = input[0][i] - input[1][i];
+  }
+
+  // vertical transform
+  // compute all h's
+  for (int i = 0; i < 2; i++) {
+    output[4 * i][0] = e[i][0] + e[i][1];
+    output[4 * i][4] = e[i][0] - e[i][1];
+  }
+}
 }  // namespace i264
 
 #endif  // MODULES_COMMON_INCLUDE_I264_COMMON_TRANSFORM_H_
