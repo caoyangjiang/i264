@@ -9,6 +9,7 @@
  *
  */
 
+#include "i264/common/common.h"
 #include "i264/common/types.h"
 
 namespace i264 {
@@ -187,12 +188,23 @@ void QuantizeScale::Quantize(
           // for intra16, dc is skipped
           if (dc_skip && i == 0 && j == 0) continue;
 
+          // There is more than one way to "round" to the integer level
+          // Standard does not say about this. Each encoder can implement
+          // whatever they want. This does not affect decoding because any
+          // sample reused for further encoding is always reconstructed strictly
+          // according to the standard.
+          //
+          // x264 implements a "quant4_bias" for this purpose.
+          // here we are use rounding to the nearest integer, which is different
+          // from x264 and JM.
           if (coefficients[i][j] >= 0) {
-            levels[i][j] = coefficients[i][j] * kQuant4_Scale[qp % 6][i][j] >>
+            levels[i][j] = ((coefficients[i][j] * kQuant4_Scale[qp % 6][i][j]) +
+                            (1 << (14 + qp / 6))) >>
                            (15 + qp / 6);
           } else {
             levels[i][j] =
-                -((-coefficients[i][j]) * kQuant4_Scale[qp % 6][i][j] >>
+                -(((-coefficients[i][j] * kQuant4_Scale[qp % 6][i][j]) +
+                   (1 << (14 + qp / 6))) >>
                   (15 + qp / 6));
           }
         }

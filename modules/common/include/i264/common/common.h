@@ -32,6 +32,13 @@ constexpr int MB_SIZE = 16;
 constexpr int32_t TRANFORM_COEFF_MAX = ((2 << (7 + BIT_DEPTH)) - 1);
 constexpr int32_t TRANFORM_COEFF_MIN = -(2 << (7 + BIT_DEPTH));
 
+// defined in 5.7
+template <class T>
+inline T Round(T value) {
+  return value >= 0 ? static_cast<decltype(value)>(value + 0.5f)
+                    : -static_cast<decltype(value)>(-value + 0.5f);
+}
+
 }  // namespace i264
 
 #endif  // MODULES_COMMON_INCLUDE_I264_COMMON_COMMON_H_
