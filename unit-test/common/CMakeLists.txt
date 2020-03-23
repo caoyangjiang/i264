@@ -2,10 +2,13 @@ cmake_minimum_required(VERSION 3.11)
 
 project(common_test)
 
-set(NCS ${PROJECT_SOURCE_DIR}/include/transform_test.h
+set(INCS
+    ${PROJECT_SOURCE_DIR}/include/scale_quantize_test.h
+    ${PROJECT_SOURCE_DIR}/include/transform_test.h
     ${PROJECT_SOURCE_DIR}/include/common_test.h)
 
 set(SRCS
+    ${PROJECT_SOURCE_DIR}/src/scale_quantize_test.cpp
     ${PROJECT_SOURCE_DIR}/src/transform_test.cpp
     ${PROJECT_SOURCE_DIR}/src/common_test.cpp
     ${PROJECT_SOURCE_DIR}/src/main.cpp)

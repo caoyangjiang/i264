@@ -1,3 +1,13 @@
+/**
+ * @file transform_test.cpp
+ * @author Caoyang Jiang (www.hypevr.com)
+ * @brief
+ * @version 0.1
+ * @date 2020-03-22
+ *
+ * @copyright Copyright (c) 2020
+ *
+ */
 
 #include "transform_test.h"
 
@@ -85,8 +95,7 @@ TEST_F(TransformTest, SimpleInverse4x4) {
 
   i264::Array2D<int32_t, 4, 4> output;
   i264::Array2D<int32_t, 4, 4> matlab_result = {
-      3136, -448, 448, 448, -448, 64,  -64, -64,
-      448,  -64,  64,  64,  448,  -64, 64,  64,
+      49, -7, 7, 7, -7, 1, -1, -1, 7, -1, 1, 1, 7, -1, 1, 1,
   };
 
   i264::Transform::Inverse4x4Residual(x, output);
@@ -106,9 +115,8 @@ TEST_F(TransformTest, SimpleInverse8x8) {
       256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256};
 
   i264::Array2D<int32_t, 8, 8> output;
-  i264::Array2D<int32_t, 4, 4> matlab_result = {3136, -448, 448, 448, -448, 64,
-                                                -64,  -64,  448, -64, 64,   64,
-                                                448,  -64,  64,  64};
+  i264::Array2D<int32_t, 4, 4> matlab_result = {49, -7, 7, 7, -7, 1,  -1, -1,
+                                                7,  -1, 1, 1, 7,  -1, 1,  1};
 
   i264::Transform::Inverse4x4Residual(x, output);
   for (int i = 0; i < 8; i++) {

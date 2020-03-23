@@ -250,17 +250,17 @@ void Transform::Inverse4x4Residual(
       }
 
       // assign coefficents
-      for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-          output[pixel_y + i][pixel_x + j] = h[i][j];
-        }
-      }
-
       // for (int i = 0; i < 4; i++) {
       //   for (int j = 0; j < 4; j++) {
-      //     output[pixel_y + i][pixel_x + j] = (h[i][j] + (1 << 5)) >> 6;
+      //     output[pixel_y + i][pixel_x + j] = h[i][j];
       //   }
       // }
+
+      for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+          output[pixel_y + i][pixel_x + j] = (h[i][j] + (1 << 5)) >> 6;
+        }
+      }
     }
   }
 }
