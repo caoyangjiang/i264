@@ -29,27 +29,67 @@ void ScaleQuantizeTest::SetUp() {}
 void ScaleQuantizeTest::TearDown() {}
 
 TEST_F(ScaleQuantizeTest, TransformScaleQuant4x4) {
-  for (int qp = 0; qp < 30; qp += 6) {
-    std::cout << "QP = " << qp << std::endl;
-    // i264::Array2D<int32_t, 4, 4> x = {1, 1, 1, 1, 2, 2, 2, 2,
-    //                                   1, 1, 1, 1, 2, 2, 2, 2};
-    i264::Array2D<int32_t, 4, 4> x = {58, 64, 51, 58, 52, 64, 56, 66,
-                                      62, 63, 61, 64, 59, 51, 63, 69};
+  for (int qp = 0; qp < 52; qp += 12) {
     i264::Array2D<int32_t, 4, 4> coefficients;
-    i264::Array2D<int32_t, 4, 4> matlab_result = {40, 0, 0, 0, -28, 0, 0, 0,
-                                                  0,  0, 0, 0, -4,  0, 0, 0};
 
-    i264::Transform::Forward4x4Residual(x, coefficients);
+    i264::Transform::Forward4x4Residual(kX_, coefficients);
 
     i264::Array2D<int32_t, 4, 4> levels;
     i264::QuantizeScale::Quantize(coefficients, qp, levels, false);
-    std::cout << i264::FormatPrintableArray2D(levels) << std::endl;
+
+    for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < 4; j++) {
+        ASSERT_EQ(levels[i][j], kLevelResults_[qp / 12][i][j]);
+      }
+    }
 
     i264::Array2D<int32_t, 4, 4> recon_coefficients;
     i264::QuantizeScale::Dequantize(levels, qp, recon_coefficients, false);
 
     i264::Array2D<int32_t, 4, 4> recon_x;
     i264::Transform::Inverse4x4Residual(recon_coefficients, recon_x);
-    std::cout << i264::FormatPrintableArray2D(recon_x) << std::endl;
+
+    for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < 4; j++) {
+        ASSERT_EQ(recon_x[i][j], kReconResults_[qp / 12][i][j]);
+      }
+    }
+  }
+}
+
+TEST_F(ScaleQuantizeTest, TransformScaleQuant16x16) {
+  i264::Array2D<int32_t, 16, 16> x;
+
+  for (int i = 0; i < 16; i++) {
+    for (int j = 0; j < 16; j++) {
+      x[i][j] = kX_[i % 4][j % 4];
+    }
+  }
+
+  for (int qp = 0; qp < 52; qp += 12) {
+    i264::Array2D<int32_t, 16, 16> coefficients;
+
+    i264::Transform::Forward4x4Residual(x, coefficients);
+
+    i264::Array2D<int32_t, 16, 16> levels;
+    i264::QuantizeScale::Quantize(coefficients, qp, levels, false);
+
+    for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+        ASSERT_EQ(levels[i][j], kLevelResults_[qp / 12][i % 4][j % 4]);
+      }
+    }
+
+    i264::Array2D<int32_t, 16, 16> recon_coefficients;
+    i264::QuantizeScale::Dequantize(levels, qp, recon_coefficients, false);
+
+    i264::Array2D<int32_t, 16, 16> recon_x;
+    i264::Transform::Inverse4x4Residual(recon_coefficients, recon_x);
+
+    for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+        ASSERT_EQ(recon_x[i][j], kReconResults_[qp / 12][i % 4][j % 4]);
+      }
+    }
   }
 }

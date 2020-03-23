@@ -145,22 +145,22 @@ void QuantizeScale::Dequantize(
           // for intra16, dc is skipped
           if (dc_skip && i == 0 && j == 0) continue;
 
+          auto& coef = coefficients[pixel_y + i][pixel_x + j];
+          auto& level = levels[pixel_y + i][pixel_x + j];
+
           if (qp >= 24) {
-            if (levels[i][j] >= 0)
-              coefficients[i][j] = levels[i][j] * level_scale_4x4[i][j]
-                                   << (qp / 6 - 4);  // (8-336)
+            if (level >= 0)
+              coef = level * level_scale_4x4[i][j] << (qp / 6 - 4);  // (8-336)
             else
-              coefficients[i][j] = -(-levels[i][j] * level_scale_4x4[i][j]
-                                     << (qp / 6 - 4));  // (8-336)
+              coef =
+                  -(-level * level_scale_4x4[i][j] << (qp / 6 - 4));  // (8-336)
           } else {
-            if (levels[i][j] >= 0)
-              coefficients[i][j] = (levels[i][j] * level_scale_4x4[i][j] +
-                                    (1 << (3 - qp / 6))) >>
-                                   (4 - qp / 6);  // (8-337)
+            if (level >= 0)
+              coef = (level * level_scale_4x4[i][j] + (1 << (3 - qp / 6))) >>
+                     (4 - qp / 6);  // (8-337)
             else
-              coefficients[i][j] = -((-levels[i][j] * level_scale_4x4[i][j] +
-                                      (1 << (3 - qp / 6))) >>
-                                     (4 - qp / 6));  // (8-337)
+              coef = -((-level * level_scale_4x4[i][j] + (1 << (3 - qp / 6))) >>
+                       (4 - qp / 6));  // (8-337)
           }
         }
       }
@@ -197,15 +197,16 @@ void QuantizeScale::Quantize(
           // x264 implements a "quant4_bias" for this purpose.
           // here we are use rounding to the nearest integer, which is different
           // from x264 and JM.
-          if (coefficients[i][j] >= 0) {
-            levels[i][j] = ((coefficients[i][j] * kQuant4_Scale[qp % 6][i][j]) +
-                            (1 << (14 + qp / 6))) >>
-                           (15 + qp / 6);
+          auto& coef = coefficients[pixel_y + i][pixel_x + j];
+          auto& level = levels[pixel_y + i][pixel_x + j];
+          if (coef >= 0) {
+            level =
+                ((coef * kQuant4_Scale[qp % 6][i][j]) + (1 << (14 + qp / 6))) >>
+                (15 + qp / 6);
           } else {
-            levels[i][j] =
-                -(((-coefficients[i][j] * kQuant4_Scale[qp % 6][i][j]) +
-                   (1 << (14 + qp / 6))) >>
-                  (15 + qp / 6));
+            level = -(((-coef * kQuant4_Scale[qp % 6][i][j]) +
+                       (1 << (14 + qp / 6))) >>
+                      (15 + qp / 6));
           }
         }
       }
