@@ -93,3 +93,35 @@ TEST_F(ScaleQuantizeTest, TransformScaleQuant16x16) {
     }
   }
 }
+
+TEST_F(ScaleQuantizeTest, TransformScaleQuantLumaDC) {
+  for (int qp = 0; qp < 52; qp += 12) {
+    i264::Array2D<int32_t, 16, 16> coefficients;
+    i264::Transform::Forward4x4Residual(kX2_, coefficients);
+    // std::cout << i264::FormatPrintableArray2D(coefficients) << std::endl;
+
+    i264::Array2D<int32_t, 16, 16> ac_levels;
+    i264::QuantizeScale::Quantize(coefficients, qp, ac_levels, true);
+
+    i264::Array2D<int32_t, 4, 4> dc_coefficients;
+    i264::Transform::Forward4x4LumaDC(coefficients, dc_coefficients);
+    // std::cout << i264::FormatPrintableArray2D(dc_coefficients) << std::endl;
+
+    i264::Array2D<int32_t, 4, 4> dc_levels;
+    i264::QuantizeScale::QuantizeLumaDC(dc_coefficients, qp, dc_levels);
+    // std::cout << i264::FormatPrintableArray2D(dc_levels) << std::endl;
+
+    i264::Array2D<int32_t, 4, 4> recon_dc_coefficients;
+    i264::QuantizeScale::DequantizeLumaDC(dc_levels, qp, recon_dc_coefficients);
+
+    i264::Array2D<int32_t, 16, 16> ac_recon_coefficients;
+    i264::QuantizeScale::Dequantize(ac_levels, qp, ac_recon_coefficients, true);
+
+    i264::Array2D<int32_t, 16, 16> recon_dc = ac_recon_coefficients;
+    i264::Transform::Inverse4x4LumaDC(recon_dc_coefficients, recon_dc);
+
+    i264::Array2D<int32_t, 16, 16> recon_x2;
+    i264::Transform::Inverse4x4Residual(recon_dc, recon_x2);
+    // std::cout << i264::FormatPrintableArray2D(recon_x2) << std::endl;
+  }
+}

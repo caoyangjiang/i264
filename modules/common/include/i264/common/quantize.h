@@ -102,10 +102,17 @@ class QuantizeScale {
       const Array2D<int32_t, BLOCK_WIDTH, BLOCK_HEIGHT>& levels, const int qp,
       Array2D<int32_t, BLOCK_WIDTH, BLOCK_HEIGHT>& coefficients, bool dc_skip);
 
+  static void QuantizeLumaDC(const Array2D<int32_t, 4, 4>& coefficients,
+                             const int qp, Array2D<int32_t, 4, 4>& levels);
+
+  static void DequantizeLumaDC(const Array2D<int32_t, 4, 4>& levels,
+                               const int qp,
+                               Array2D<int32_t, 4, 4>& coefficients);
+
   template <int BLOCK_WIDTH, int BLOCK_HEIGHT>
-  static void DequantizeLumaDC(
-      const Array2D<int32_t, BLOCK_WIDTH, BLOCK_HEIGHT>& levels, const int qp,
-      Array2D<int32_t, BLOCK_WIDTH, BLOCK_HEIGHT>& coefficients);
+  static void QuantizeChromaDC(
+      const Array2D<int32_t, BLOCK_WIDTH, BLOCK_HEIGHT>& coefficients,
+      const int qp, Array2D<int32_t, BLOCK_WIDTH, BLOCK_HEIGHT>& levels);
 
   template <int BLOCK_WIDTH, int BLOCK_HEIGHT>
   static void DequantizeChromaDC(
@@ -143,10 +150,10 @@ void QuantizeScale::Dequantize(
       for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
           // for intra16, dc is skipped
-          if (dc_skip && i == 0 && j == 0) continue;
+          if (dc_skip && ((i % 4) == 0) && ((j % 4) == 0)) continue;
 
           auto& coef = coefficients[pixel_y + i][pixel_x + j];
-          auto& level = levels[pixel_y + i][pixel_x + j];
+          const auto& level = levels[pixel_y + i][pixel_x + j];
 
           if (qp >= 24) {
             if (level >= 0)
@@ -186,7 +193,7 @@ void QuantizeScale::Quantize(
       for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
           // for intra16, dc is skipped
-          if (dc_skip && i == 0 && j == 0) continue;
+          if (dc_skip && ((i % 4) == 0) && ((j % 4) == 0)) continue;
 
           // There is more than one way to "round" to the integer level
           // Standard does not say about this. Each encoder can implement
@@ -197,7 +204,7 @@ void QuantizeScale::Quantize(
           // x264 implements a "quant4_bias" for this purpose.
           // here we are use rounding to the nearest integer, which is different
           // from x264 and JM.
-          auto& coef = coefficients[pixel_y + i][pixel_x + j];
+          const auto& coef = coefficients[pixel_y + i][pixel_x + j];
           auto& level = levels[pixel_y + i][pixel_x + j];
           if (coef >= 0) {
             level =

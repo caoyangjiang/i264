@@ -48,10 +48,10 @@ void Transform::Forward4x4LumaDC(const Array2D<int32_t, 16, 16>& input,
 
   // compute all h's
   for (int i = 0; i < 4; i++) {
-    output[i][0] = g[i][0] + g[i][2];
-    output[i][1] = g[i][1] + g[i][3];
-    output[i][2] = g[i][0] - g[i][2];
-    output[i][3] = g[i][1] - g[i][3];
+    output[i][0] = (g[i][0] + g[i][2]) >> 1;
+    output[i][1] = (g[i][1] + g[i][3]) >> 1;
+    output[i][2] = (g[i][0] - g[i][2]) >> 1;
+    output[i][3] = (g[i][1] - g[i][3]) >> 1;
   }
 }
 

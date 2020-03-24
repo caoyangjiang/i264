@@ -27,6 +27,7 @@ set(PROJECT_INCS
     ${PROJECT_SOURCE_DIR}/include/i264/common/yuv.h)
 
 set(PROJECT_SRCS
+    ${PROJECT_SOURCE_DIR}/src/quantize.cpp
     ${PROJECT_SOURCE_DIR}/src/transform.cpp
     ${PROJECT_SOURCE_DIR}/src/common.cpp
     ${PROJECT_SOURCE_DIR}/src/macroblock.cpp
