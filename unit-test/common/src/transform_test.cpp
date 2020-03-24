@@ -194,44 +194,44 @@ TEST_F(TransformTest, SimpleInverseLumaDC) {
   }
 }
 
-// TEST_F(TransformTest, SimpleForwardChromaDC) {
-//   i264::Array2D<int32_t, 8, 8> x = {
-//       1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3,
-//       3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2,
-//       2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4};
+TEST_F(TransformTest, SimpleForwardChromaDC) {
+  i264::Array2D<int32_t, 8, 8> x = {
+      1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3,
+      3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2,
+      2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4};
 
-//   i264::Array2D<int32_t, 2, 2> output;
-//   i264::Array2D<int32_t, 2, 2> matlab_result = {4, 0, 0, 0};
+  i264::Array2D<int32_t, 2, 2> output;
+  i264::Array2D<int32_t, 2, 2> matlab_result = {4, 0, 0, 0};
 
-//   i264::Transform::Forward2x2ChromaDC(x, output);
-//   for (int i = 0; i < 2; i++) {
-//     for (int j = 0; j < 2; j++) {
-//       ASSERT_EQ(output[i][j], matlab_result[i][j]);
-//     }
-//   }
-// }
+  i264::Transform::Forward2x2ChromaDC(x, output);
+  for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < 2; j++) {
+      ASSERT_EQ(output[i][j], matlab_result[i][j]);
+    }
+  }
+}
 
-// TEST_F(TransformTest, SimpleInverseChromaDC) {
-//   i264::Array2D<int32_t, 2, 2> x = {4, 0, 0, 0};
+TEST_F(TransformTest, SimpleInverseChromaDC) {
+  i264::Array2D<int32_t, 2, 2> x = {4, 0, 0, 0};
 
-//   i264::Array2D<int32_t, 8, 8> output = {
-//       1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3,
-//       3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2,
-//       2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4};
+  i264::Array2D<int32_t, 8, 8> output = {
+      1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3,
+      3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2,
+      2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4};
 
-//   i264::Array2D<int32_t, 2, 2> matlab_result = {4, 4, 4, 4};
-//   i264::Array2D<int32_t, 8, 8> origin = {
-//       1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3,
-//       3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2,
-//       2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4};
+  i264::Array2D<int32_t, 2, 2> matlab_result = {4, 4, 4, 4};
+  i264::Array2D<int32_t, 8, 8> origin = {
+      1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3,
+      3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2,
+      2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4};
 
-//   i264::Transform::Inverse2x2ChromaDC(x, output);
-//   for (int i = 0; i < 8; i++) {
-//     for (int j = 0; j < 8; j++) {
-//       if (i % 4 == 0 && j % 4 == 0)
-//         ASSERT_EQ(output[i][j], matlab_result[i / 4][j / 4]);
-//       else
-//         ASSERT_EQ(output[i][j], origin[i][j]);
-//     }
-//   }
-// }
+  i264::Transform::Inverse2x2ChromaDC(x, output);
+  for (int i = 0; i < 8; i++) {
+    for (int j = 0; j < 8; j++) {
+      if (i % 4 == 0 && j % 4 == 0)
+        ASSERT_EQ(output[i][j], matlab_result[i / 4][j / 4]);
+      else
+        ASSERT_EQ(output[i][j], origin[i][j]);
+    }
+  }
+}

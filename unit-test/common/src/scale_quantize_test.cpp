@@ -123,5 +123,11 @@ TEST_F(ScaleQuantizeTest, TransformScaleQuantLumaDC) {
     i264::Array2D<int32_t, 16, 16> recon_x2;
     i264::Transform::Inverse4x4Residual(recon_dc, recon_x2);
     // std::cout << i264::FormatPrintableArray2D(recon_x2) << std::endl;
+
+    for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < 16; j++) {
+        ASSERT_EQ(recon_x2[i][j], kReconResults2_[qp / 12][i % 4][j % 4]);
+      }
+    }
   }
 }
