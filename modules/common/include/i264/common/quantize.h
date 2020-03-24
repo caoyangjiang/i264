@@ -109,15 +109,12 @@ class QuantizeScale {
                                const int qp,
                                Array2D<int32_t, 4, 4>& coefficients);
 
-  template <int BLOCK_WIDTH, int BLOCK_HEIGHT>
-  static void QuantizeChromaDC(
-      const Array2D<int32_t, BLOCK_WIDTH, BLOCK_HEIGHT>& coefficients,
-      const int qp, Array2D<int32_t, BLOCK_WIDTH, BLOCK_HEIGHT>& levels);
+  static void QuantizeChromaDC(const Array2D<int32_t, 2, 2>& coefficients,
+                               const int qp, Array2D<int32_t, 2, 2>& levels);
 
-  template <int BLOCK_WIDTH, int BLOCK_HEIGHT>
-  static void DequantizeChromaDC(
-      const Array2D<int32_t, BLOCK_WIDTH, BLOCK_HEIGHT>& levels, const int qp,
-      Array2D<int32_t, BLOCK_WIDTH, BLOCK_HEIGHT>& coefficients);
+  static void DequantizeChromaDC(const Array2D<int32_t, 2, 2>& levels,
+                                 const int qp,
+                                 Array2D<int32_t, 2, 2>& coefficients);
 };
 
 template <unsigned long BLOCK_WIDTH, unsigned long BLOCK_HEIGHT>
@@ -193,7 +190,12 @@ void QuantizeScale::Quantize(
       for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
           // for intra16, dc is skipped
-          if (dc_skip && ((i % 4) == 0) && ((j % 4) == 0)) continue;
+          if (dc_skip && ((i % 4) == 0) && ((j % 4) == 0)) {
+            // value here does matter if dc_skip is on, just for easier
+            // visualization
+            levels[pixel_y + i][pixel_x + j] = 0;
+            continue;
+          }
 
           // There is more than one way to "round" to the integer level
           // Standard does not say about this. Each encoder can implement

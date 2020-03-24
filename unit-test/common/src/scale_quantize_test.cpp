@@ -131,3 +131,50 @@ TEST_F(ScaleQuantizeTest, TransformScaleQuantLumaDC) {
     }
   }
 }
+
+TEST_F(ScaleQuantizeTest, TransformScaleQuantChromaDC) {
+  for (int qp = 0; qp < 52; qp += 12) {
+    // std::cout << "QP: " << qp << std::endl;
+    i264::Array2D<int32_t, 8, 8> coefficients;
+    i264::Transform::Forward4x4Residual(kX3_, coefficients);
+    // std::cout << i264::FormatPrintableArray2D(coefficients) << std::endl;
+
+    i264::Array2D<int32_t, 8, 8> ac_levels;
+    i264::QuantizeScale::Quantize(coefficients, qp, ac_levels, true);
+    // std::cout << "AC  " << std::endl;
+    // std::cout << i264::FormatPrintableArray2D(ac_levels) << std::endl;
+
+    i264::Array2D<int32_t, 2, 2> dc_coefficients;
+    i264::Transform::Forward2x2ChromaDC(coefficients, dc_coefficients);
+    // std::cout << i264::FormatPrintableArray2D(dc_coefficients) << std::endl;
+
+    i264::Array2D<int32_t, 2, 2> dc_levels;
+    i264::QuantizeScale::QuantizeChromaDC(dc_coefficients, qp, dc_levels);
+    // std::cout << i264::FormatPrintableArray2D(dc_levels) << std::endl;
+
+    // std::cout << "DC  " << std::endl;
+    // std::cout << i264::FormatPrintableArray2D(dc_levels) << std::endl;
+
+    i264::Array2D<int32_t, 2, 2> recon_dc_coefficients;
+    i264::QuantizeScale::DequantizeChromaDC(dc_levels, qp,
+                                            recon_dc_coefficients);
+
+    i264::Array2D<int32_t, 8, 8> ac_recon_coefficients;
+    i264::QuantizeScale::Dequantize(ac_levels, qp, ac_recon_coefficients, true);
+
+    i264::Array2D<int32_t, 8, 8> recon_coefficients = ac_recon_coefficients;
+    i264::Transform::Inverse2x2ChromaDC(recon_dc_coefficients,
+                                        recon_coefficients);
+
+    i264::Array2D<int32_t, 8, 8> recon_x3;
+    i264::Transform::Inverse4x4Residual(recon_coefficients, recon_x3);
+    // std::cout << "RECON " << std::endl
+    // std::cout << i264::FormatPrintableArray2D(recon_x3) << std::endl;
+
+    for (int i = 0; i < 8; i++) {
+      for (int j = 0; j < 8; j++) {
+        ASSERT_EQ(recon_x3[i][j], kReconResults3_[qp / 12][i % 4][j % 4]);
+      }
+    }
+  }
+}
