@@ -105,6 +105,9 @@ enum class NEIGHBOR_MB_POS {
   TOP_LEFT = 3,
 };
 
+template <class T, int DIM1, int DIM2, int DIM3>
+using Array3D = std::array<std::array<std::array<T, DIM1>, DIM2>, DIM3>;
+
 /**
  * @brief Any two dimensional structure
  *

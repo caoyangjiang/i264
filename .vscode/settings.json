@@ -86,7 +86,8 @@
         "cinttypes": "cpp",
         "filesystem": "cpp",
         "*.ipp": "cpp",
-        "__functional_base_03": "cpp"
+        "__functional_base_03": "cpp",
+        "__memory": "cpp"
     },
     "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools"
 }

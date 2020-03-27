@@ -10,6 +10,8 @@ if(MSVC)
 endif()
 
 set(PROJECT_INCS
+    ${PROJECT_SOURCE_DIR}/include/i264/common/bit_stream.h
+    ${PROJECT_SOURCE_DIR}/include/i264/common/variable_length_coder.h
     ${PROJECT_SOURCE_DIR}/include/i264/common/access_unit.h
     ${PROJECT_SOURCE_DIR}/include/i264/common/annexb.h
     ${PROJECT_SOURCE_DIR}/include/i264/common/base.h
@@ -27,6 +29,8 @@ set(PROJECT_INCS
     ${PROJECT_SOURCE_DIR}/include/i264/common/yuv.h)
 
 set(PROJECT_SRCS
+    ${PROJECT_SOURCE_DIR}/src/bit_stream.cpp
+    ${PROJECT_SOURCE_DIR}/src/variable_length_coder.cpp
     ${PROJECT_SOURCE_DIR}/src/quantize.cpp
     ${PROJECT_SOURCE_DIR}/src/transform.cpp
     ${PROJECT_SOURCE_DIR}/src/common.cpp
