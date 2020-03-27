@@ -85,3 +85,63 @@ TEST_F(VariableLengthCoderTest, SimpleTE63) {
     ASSERT_EQ(length, 1);
   }
 }
+
+TEST_F(VariableLengthCoderTest, SimpleU1) {
+  for (uint8_t i = 0; i < 1; i++) {
+    uint8_t value = i + 0xF0;
+    uint32_t code = 0;
+    i264::VlcCoder::CodeAsU1(value, code);
+    ASSERT_EQ(code, i);
+  }
+
+  for (uint16_t i = 0; i < 1; i++) {
+    uint16_t value = i + 0xF0;
+    uint32_t code = 0;
+    i264::VlcCoder::CodeAsU1(value, code);
+    ASSERT_EQ(code, i);
+  }
+
+  for (uint32_t i = 0; i < 1; i++) {
+    uint32_t value = i + 0xF0;
+    uint32_t code = 0;
+    i264::VlcCoder::CodeAsU1(value, code);
+    ASSERT_EQ(code, i);
+  }
+
+  for (uint64_t i = 0; i < 1; i++) {
+    uint64_t value = i + 0xF0;
+    uint32_t code = 0;
+    i264::VlcCoder::CodeAsU1(value, code);
+    ASSERT_EQ(code, i);
+  }
+}
+
+TEST_F(VariableLengthCoderTest, SimpleF1) {
+  for (uint8_t i = 0; i < 1; i++) {
+    uint8_t value = i + 0xF0;
+    uint32_t code = 0;
+    i264::VlcCoder::CodeAsF1(value, code);
+    ASSERT_EQ(code, i);
+  }
+
+  for (uint16_t i = 0; i < 1; i++) {
+    uint16_t value = i + 0xF0;
+    uint32_t code = 0;
+    i264::VlcCoder::CodeAsF1(value, code);
+    ASSERT_EQ(code, i);
+  }
+
+  for (uint32_t i = 0; i < 1; i++) {
+    uint32_t value = i + 0xF0;
+    uint32_t code = 0;
+    i264::VlcCoder::CodeAsF1(value, code);
+    ASSERT_EQ(code, i);
+  }
+
+  for (uint64_t i = 0; i < 1; i++) {
+    uint64_t value = i + 0xF0;
+    uint32_t code = 0;
+    i264::VlcCoder::CodeAsF1(value, code);
+    ASSERT_EQ(code, i);
+  }
+}

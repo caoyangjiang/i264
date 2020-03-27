@@ -35,14 +35,12 @@ class VlcCoder {
                        int coded_block_pattern, uint32_t& exp_golomb_code,
                        uint32_t& length);
 
-  template <class T, std::enable_if_t<
-                         std::is_integral<T>::value && sizeof(T) <= 4, void>>
-  inline static void CodeAsU1(int value, uint32_t& code) {
-    code = static_cast<uint32_t>(value);
+  template <class T, class = std::enable_if_t<std::is_unsigned<T>::value, void>>
+  inline static void CodeAsU1(T value, uint32_t& code) {
+    code = static_cast<uint32_t>(value & 0x1);
   }
 
-  template <class T, std::enable_if_t<
-                         std::is_integral<T>::value && sizeof(T) <= 4, void>>
+  template <class T>
   inline static void CodeAsF1(T value, uint32_t& code) {
     CodeAsU1(value, code);
   }
