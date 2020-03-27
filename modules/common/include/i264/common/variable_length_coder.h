@@ -36,6 +36,13 @@ class VlcCoder {
                        uint32_t& length);
 
   template <class T, class = std::enable_if_t<std::is_unsigned<T>::value, void>>
+  inline static void CodeAsUN(T value, uint32_t value_length, uint32_t& code,
+                              uint32_t& code_length) {
+    code = static_cast<uint32_t>(value);
+    code_length = value_length;
+  }
+
+  template <class T, class = std::enable_if_t<std::is_unsigned<T>::value, void>>
   inline static void CodeAsU1(T value, uint32_t& code) {
     code = static_cast<uint32_t>(value & 0x1);
   }

@@ -27,7 +27,8 @@ void BitStreamWriter::WriteAlignZero() {
 }
 
 size_t BitStreamWriter::GetNumberOfBitsUntilByteAligned() const {
-  return 8 - (bit_stream_.Size() % 8);
+  auto bits_written_in_last_byte = (bit_stream_.Size() % 8);
+  return bits_written_in_last_byte == 0 ? 0 : 8 - bits_written_in_last_byte;
 }
 
 size_t BitStreamWriter::GetNumberOfWrittenBits() const {

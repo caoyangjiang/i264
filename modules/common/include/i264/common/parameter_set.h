@@ -28,50 +28,52 @@ struct VUIParameters {};
 struct SPS {
   bool valid = 0;  // is this needed?
 
-  uint64_t profile_idc = 0;        // u(8)
-  bool constrained_set0_flag = 0;  // u(1)
-  bool constrained_set1_flag = 0;  // u(1)
-  bool constrained_set2_flag = 0;  // u(1)
-  bool constrained_set3_flag = 0;  // u(1)
+  uint32_t profile_idc = 0;            // u(8)
+  uint32_t constrained_set0_flag = 0;  // u(1)
+  uint32_t constrained_set1_flag = 0;  // u(1)
+  uint32_t constrained_set2_flag = 0;  // u(1)
+  uint32_t constrained_set3_flag = 0;  // u(1)
+  uint32_t constrained_set4_flag = 0;  // u(1)
+  uint32_t constrained_set5_flag = 0;  // u(1)
 
-  uint32_t level_idc = 0;                        // u(8)
-  uint32_t seq_parameter_set_id = 0;             // ue(v)
-  uint32_t chroma_format_idc = 0;                // ue(v)
-  uint32_t separate_colour_plane_flag = 0;       // u(1)
-  uint32_t bit_depth_luma_minus8 = 0;            // ue(v)
-  uint32_t bit_depth_chroma_minus8 = 0;          // ue(v)
-  int qpprime_y_zero_transform_bypass_flag = 0;  // u(1)
+  uint32_t level_idc = 0;                             // u(8)
+  uint32_t seq_parameter_set_id = 0;                  // ue(v)
+  uint32_t chroma_format_idc = 0;                     // ue(v)
+  uint32_t separate_colour_plane_flag = 0;            // u(1)
+  uint32_t bit_depth_luma_minus8 = 0;                 // ue(v)
+  uint32_t bit_depth_chroma_minus8 = 0;               // ue(v)
+  uint32_t qpprime_y_zero_transform_bypass_flag = 0;  // u(1)
 
-  bool seq_scaling_matrix_present_flag = 0;           // u(1)
+  uint32_t seq_scaling_matrix_present_flag = 0;       // u(1)
   std::array<int, 12> seq_scaling_list_present_flag;  // u(1)
   Array2D<int, 6, 16> scaling_list_4x4;               // se(v)
   Array2D<int, 6, 64> scaling_list_8x8;               // se(v)
-  std::array<bool, 6> use_default_scaling_matrix_4x4_flag;
-  std::array<bool, 6> use_default_scaling_matrix_8x8_flag;
+  Array1D<bool, 6> use_default_scaling_matrix_4x4_flag;
+  Array1D<bool, 6> use_default_scaling_matrix_8x8_flag;
 
   uint32_t log2_max_frame_num_minus4 = 0;          // ue(v)
   uint32_t pic_order_cnt_type = 0;                 // ue(v)
   uint32_t log2_max_pic_order_cnt_lsb_minus4 = 0;  // ue(v)
 
-  bool delta_pic_order_always_zero_flag = 0;           // u(1)
-  int offset_for_non_ref_pic = 0;                      // se(v)
-  int offset_for_top_to_bottom_field = 0;              // se(v)
+  uint32_t delta_pic_order_always_zero_flag = 0;       // u(1)
+  int32_t offset_for_non_ref_pic = 0;                  // se(v)
+  int32_t offset_for_top_to_bottom_field = 0;          // se(v)
   uint32_t num_ref_frames_in_pic_order_cnt_cycle = 0;  // ue(v)
   std::array<int, 256> offset_for_ref_frame;           // se(v)
 
-  uint32_t max_num_ref_frames = 0;                // ue(v)
-  bool gaps_in_frame_num_value_allowed_flag = 0;  // u(1)
-  uint32_t pic_width_in_mbs_minus1 = 0;           // ue(v)
-  uint32_t pic_height_in_map_units_minus1 = 0;    // ue(v)
-  bool frame_mbs_only_flag = 0;                   // u(1)
+  uint32_t max_num_ref_frames = 0;                    // ue(v)
+  uint32_t gaps_in_frame_num_value_allowed_flag = 0;  // u(1)
+  uint32_t pic_width_in_mbs_minus1 = 0;               // ue(v)
+  uint32_t pic_height_in_map_units_minus1 = 0;        // ue(v)
+  uint32_t frame_mbs_only_flag = 0;                   // u(1)
 
-  bool mb_adaptive_frame_field_flag = 0;  // u(1)
-  bool direct_8x8_inference_flag = 0;     // u(1)
-  bool frame_cropping_flag = 0;           // u(1)
-  uint32_t frame_crop_left_offset = 0;    // ue(v)
-  uint32_t frame_crop_right_offset = 0;   // ue(v)
-  uint32_t frame_crop_top_offset = 0;     // ue(v)
-  uint32_t frame_crop_bottom_offset = 0;  // ue(v)
+  uint32_t mb_adaptive_frame_field_flag = 0;  // u(1)
+  uint32_t direct_8x8_inference_flag = 0;     // u(1)
+  uint32_t frame_cropping_flag = 0;           // u(1)
+  uint32_t frame_crop_left_offset = 0;        // ue(v)
+  uint32_t frame_crop_right_offset = 0;       // ue(v)
+  uint32_t frame_crop_top_offset = 0;         // ue(v)
+  uint32_t frame_crop_bottom_offset = 0;      // ue(v)
   std::optional<VUIParameters> vui_parameters_;
 };
 

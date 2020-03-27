@@ -23,7 +23,7 @@ class BitStreamWriter {
   void WriteAlignZero();
 
   template <class TCODE, class TLEN,
-            std::enable_if_t<std::is_unsigned<TCODE>::value, void>>
+            class = std::enable_if_t<std::is_unsigned<TCODE>::value, void>>
   inline void Write(TCODE code, TLEN length) {
     while (length > 0) {
       bit_stream_.Push(

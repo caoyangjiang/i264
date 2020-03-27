@@ -29,6 +29,7 @@ set(PROJECT_INCS
     ${PROJECT_SOURCE_DIR}/include/i264/common/yuv.h)
 
 set(PROJECT_SRCS
+    ${PROJECT_SOURCE_DIR}/src/syntax_coder.cpp
     ${PROJECT_SOURCE_DIR}/src/bit_stream.cpp
     ${PROJECT_SOURCE_DIR}/src/variable_length_coder.cpp
     ${PROJECT_SOURCE_DIR}/src/quantize.cpp
