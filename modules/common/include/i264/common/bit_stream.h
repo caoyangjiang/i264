@@ -21,7 +21,17 @@ class BitStreamWriter {
   void WriteZero();
   void WriteAlignOne();
   void WriteAlignZero();
-  void Write(uint32_t code, uint32_t length);
+
+  template <class TCODE, class TLEN,
+            std::enable_if_t<std::is_unsigned<TCODE>::value, void>>
+  inline void Write(TCODE code, TLEN length) {
+    while (length > 0) {
+      bit_stream_.Push(
+          static_cast<BitStream::value_type>((code >> (length - 1)) & 0x01));
+      length--;
+    }
+  }
+
   size_t GetNumberOfBitsUntilByteAligned() const;
   size_t GetNumberOfWrittenBits() const;
   const BitStream& GetBitStream() const;

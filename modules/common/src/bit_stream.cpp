@@ -26,8 +26,6 @@ void BitStreamWriter::WriteAlignZero() {
     bit_stream_.Push(static_cast<uint8_t>(1));
 }
 
-void BitStreamWriter::Write(uint32_t code, uint32_t length) {}
-
 size_t BitStreamWriter::GetNumberOfBitsUntilByteAligned() const {
   return 8 - (bit_stream_.Size() % 8);
 }

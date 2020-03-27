@@ -12,13 +12,16 @@
 #ifndef MODULES_COMMON_INCLUDE_I264_COMMON_VARIABLE_LENGTH_CODER_H_
 #define MODULES_COMMON_INCLUDE_I264_COMMON_VARIABLE_LENGTH_CODER_H_
 
+#include <type_traits>
+
 #include "i264/common/bit_stream.h"
 
 namespace i264 {
 
 /**
  * @brief All entropy coding scheme are defined in 7.2
- * and
+ *
+ *
  *
  */
 class VlcCoder {
@@ -31,10 +34,18 @@ class VlcCoder {
   static void CodeAsME(int is_chroma_array_type_1_or_2, int is_intra,
                        int coded_block_pattern, uint32_t& exp_golomb_code,
                        uint32_t& length);
-  static void CodeAsB8(uint8_t value, uint32_t& output, uint32_t& length);
 
-  // static void CodeAsU(int n, int value, BitStreamWriter& bitstream);
-  // static void CodeAsU1(int value, BitStreamWriter& bitstream);
+  template <class T, std::enable_if_t<
+                         std::is_integral<T>::value && sizeof(T) <= 4, void>>
+  inline static void CodeAsU1(int value, uint32_t& code) {
+    code = static_cast<uint32_t>(value);
+  }
+
+  template <class T, std::enable_if_t<
+                         std::is_integral<T>::value && sizeof(T) <= 4, void>>
+  inline static void CodeAsF1(T value, uint32_t& code) {
+    CodeAsU1(value, code);
+  }
 };
 
 }  // namespace i264
