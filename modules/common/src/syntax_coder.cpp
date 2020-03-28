@@ -170,4 +170,30 @@ void SyntaxCoder::CodeRbspTraillingBits(BitStreamWriter& bit_stream_writer) {
   }
 }
 
+void SyntaxCoder::CodeNalUnit(uint8_t nal_ref_idc, uint8_t nal_unit_type,
+                              const uint8_t* nal_unit, size_t nal_unit_len,
+                              std::vector<uint8_t>& rbsp_bytes) {
+  rbsp_bytes.reserve(rbsp_bytes.size() * 3 / 2);
+  rbsp_bytes.push_back(((0x03 & nal_ref_idc) << 5) + (0x1F & nal_unit_type));
+
+  // if(nal_unit_type == 14 || nal_unit_type==20 || nal_unit_type == 21)
+  // { not implemented }
+
+  int leading_zero_count = 0;
+  for (uint32_t i = 0; i < nal_unit_len; i++) {
+    if ((leading_zero_count == 2) && (nal_unit[i] <= 0x03)) {
+      rbsp_bytes.push_back(0x03);
+      leading_zero_count = 0;
+    }
+
+    if (nal_unit[i] == 0) {
+      leading_zero_count++;
+    } else {
+      leading_zero_count = 0;
+    }
+
+    rbsp_bytes.push_back(nal_unit[i]);
+  }
+}
+
 }  // namespace i264
