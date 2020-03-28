@@ -11,6 +11,8 @@
 
 #include "i264/common/syntax_coder.h"
 
+#include <cmath>
+
 #include "i264/common/bit_stream.h"
 #include "i264/common/variable_length_coder.h"
 
@@ -161,7 +163,110 @@ void SyntaxCoder::CodeSPS(const SPS& sps, BitStreamWriter& bit_stream_writer) {
   CodeRbspTraillingBits(bit_stream_writer);
 }
 
-void SyntaxCoder::CodePPS(const PPS& pps, BitStreamWriter& bit_stream_writer) {}
+void SyntaxCoder::CodePPS(const PPS& pps, BitStreamWriter& bit_stream_writer) {
+  uint32_t code = 0, code_length = 0;
+
+  VlcCoder::CodeAsUE(pps.pic_parameter_set_id, code, code_length);
+  bit_stream_writer.Write(code, code_length);
+
+  VlcCoder::CodeAsUE(pps.seq_parameter_set_id, code, code_length);
+  bit_stream_writer.Write(code, code_length);
+
+  VlcCoder::CodeAsU1(pps.entropy_coding_mode_flag, code);
+  bit_stream_writer.Write(code, 1);
+
+  VlcCoder::CodeAsU1(pps.bottom_field_pic_order_in_frame_present_flag, code);
+  bit_stream_writer.Write(code, 1);
+
+  VlcCoder::CodeAsUE(pps.num_slice_groups_minus1, code, code_length);
+  bit_stream_writer.Write(code, code_length);
+
+  //   if (pps.num_slice_groups_minus1 > 0) {
+  //     VlcCoder::CodeAsUE(pps.slice_group_map_type, code, code_length);
+  //     bit_stream_writer.Write(code, code_length);
+
+  //     if (pps.slice_group_map_type == 0) {
+  //       for (uint32_t igroup = 0; igroup <= pps.num_slice_groups_minus1;
+  //            igroup++) {
+  //         VlcCoder::CodeAsUE(pps.run_length_minus1[igroup], code,
+  //         code_length); bit_stream_writer.Write(code, code_length);
+  //       }
+  //     } else if (pps.slice_group_map_type == 2) {
+  //       for (uint32_t igroup = 0; igroup < pps.num_slice_groups_minus1;
+  //            igroup++) {
+  //         VlcCoder::CodeAsUE(pps.top_left[igroup], code, code_length);
+  //         bit_stream_writer.Write(code, code_length);
+  //         VlcCoder::CodeAsUE(pps.bottom_right[igroup], code, code_length);
+  //         bit_stream_writer.Write(code, code_length);
+  //       }
+  //     } else if (pps.slice_group_map_type == 3 || pps.slice_group_map_type ==
+  //     4 ||
+  //                pps.slice_group_map_type == 5) {
+  //       VlcCoder::CodeAsU1(pps.slice_group_change_direction_flag, code);
+  //       bit_stream_writer.Write(code, 1);
+  //       VlcCoder::CodeAsUE(pps.slice_group_change_rate_minus1, code,
+  //       code_length); bit_stream_writer.Write(code, code_length);
+  //     } else if (pps.slice_group_map_type == 6) {
+  //       VlcCoder::CodeAsUE(pps.pic_size_in_map_units_minus1, code,
+  //       code_length); bit_stream_writer.Write(code, code_length);
+
+  //       uint32_t slice_group_id_length =
+  //           std::ceil(std::log2(pps.num_slice_groups_minus1 + 1));
+  //       for (uint32_t i = 0; i < pps.pic_size_in_map_units_minus1; i++) {
+  //         VlcCoder::CodeAsUN(pps.pic_size_in_map_units_minus1,
+  //                            slice_group_id_length, code, code_length);
+  //         bit_stream_writer.Write(code, code_length);
+  //       }
+  //     }
+  //   }
+
+  VlcCoder::CodeAsUE(pps.num_ref_idx_l0_default_active_minus1, code,
+                     code_length);
+  bit_stream_writer.Write(code, code_length);
+
+  VlcCoder::CodeAsUE(pps.num_ref_idx_l1_default_active_minus1, code,
+                     code_length);
+  bit_stream_writer.Write(code, code_length);
+
+  VlcCoder::CodeAsU1(pps.weighted_pred_flag, code);
+  bit_stream_writer.Write(code, 1);
+
+  VlcCoder::CodeAsUN(pps.weighted_bipred_idc, 2, code, code_length);
+  bit_stream_writer.Write(code, code_length);
+
+  VlcCoder::CodeAsSE(pps.pic_init_qp_minus26, code, code_length);
+  bit_stream_writer.Write(code, code_length);
+
+  VlcCoder::CodeAsSE(pps.pic_init_qs_minus26, code, code_length);
+  bit_stream_writer.Write(code, code_length);
+
+  VlcCoder::CodeAsSE(pps.chroma_qp_index_offset, code, code_length);
+  bit_stream_writer.Write(code, code_length);
+
+  VlcCoder::CodeAsU1(pps.deblocking_filter_control_present_flag, code);
+  bit_stream_writer.Write(code, 1);
+
+  VlcCoder::CodeAsU1(pps.constrained_intra_pred_flag, code);
+  bit_stream_writer.Write(code, 1);
+
+  VlcCoder::CodeAsU1(pps.redundant_pic_cnt_present_flag, code);
+  bit_stream_writer.Write(code, 1);
+
+  VlcCoder::CodeAsU1(pps.transform_8x8_mode_flag, code);
+  bit_stream_writer.Write(code, 1);
+
+  VlcCoder::CodeAsU1(pps.pic_scaling_matrix_present_flag, code);
+  bit_stream_writer.Write(code, 1);
+
+  if (pps.pic_scaling_matrix_present_flag) {
+    // not implemented yet
+  }
+
+  VlcCoder::CodeAsSE(pps.second_chroma_qp_index_offset, code, code_length);
+  bit_stream_writer.Write(code, code_length);
+
+  CodeRbspTraillingBits(bit_stream_writer);
+}
 
 void SyntaxCoder::CodeRbspTraillingBits(BitStreamWriter& bit_stream_writer) {
   bit_stream_writer.WriteOne();

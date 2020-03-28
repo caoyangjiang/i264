@@ -58,6 +58,37 @@ TEST_F(SyntaxCoderTest, SimpleSPS) {
     ASSERT_EQ(rbsp[i], reference_out[i]);
   }
 
-  //   std::cout << "Wrote: " << rbsp.size() << " bytes." << std::endl;
   //   i264::WriteNalUnitToFileAsAnnexB("sps.h264", rbsp);
+}
+
+TEST_F(SyntaxCoderTest, SimplePPS) {
+  i264::PPS pps;
+
+  pps.entropy_coding_mode_flag = 1;
+  pps.num_ref_idx_l0_default_active_minus1 = 2;
+  pps.weighted_pred_flag = 1;
+  pps.weighted_bipred_idc = 2;
+  pps.pic_init_qp_minus26 = -20;
+  pps.chroma_qp_index_offset = -2;
+  pps.deblocking_filter_control_present_flag = 1;
+  pps.transform_8x8_mode_flag = 1;
+  pps.pic_scaling_matrix_present_flag = 0;
+  pps.second_chroma_qp_index_offset = -2;
+
+  i264::BitStreamWriter writer;
+  i264::SyntaxCoder::CodePPS(pps, writer);
+
+  auto bit_stream = writer.GetBitStream();
+
+  std::vector<uint8_t> rbsp;
+  i264::SyntaxCoder::CodeNalUnit(0x03, 0x08, bit_stream.Data(),
+                                 bit_stream.BufferElementCount(), rbsp);
+
+  std::array<uint8_t, 6> reference_out = {0x68, 0xeb, 0xe0, 0x53, 0x2c, 0x8b};
+  ASSERT_EQ(rbsp.size(), reference_out.size());
+  for (size_t i = 0; i < reference_out.size(); i++) {
+    ASSERT_EQ(rbsp[i], reference_out[i]);
+  }
+
+  // i264::WriteNalUnitToFileAsAnnexB("pps.h264", rbsp);
 }

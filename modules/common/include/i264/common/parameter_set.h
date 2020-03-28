@@ -95,40 +95,40 @@ struct SubsetSPS {};
 struct PPS {
   bool valid = 0;  // is this needed?
 
-  uint32_t pic_parameter_set_id = 0;                  // ue(v)
-  uint32_t seq_parameter_set_id = 0;                  // ue(v)
-  bool entropy_coding_mode_flag = 0;                  // u(1)
-  bool bottom_field_pic_order_in_frame_present_flag;  // u(1)
-  uint32_t num_slice_groups_minus1 = 0;               // ue(v)
-  uint32_t slice_group_map_type = 0;                  // ue(v)
-  std::array<int, 8> run_length_minus1;               // ue(v)
-  std::array<int, 8> top_left;                        // ue(v)
-  std::array<int, 8> bottom_right;                    // ue(v)
-  bool slice_group_change_direction_flag = 0;         // u(1)
-  uint32_t slice_group_change_rate_minus1 = 0;        // ue(v)
-  uint32_t pic_size_in_map_units_minus1 = 0;          // ue(v)
-  std::vector<uint8_t> slice_group_id;                // ue(v)
+  uint32_t pic_parameter_set_id = 0;                          // ue(v)
+  uint32_t seq_parameter_set_id = 0;                          // ue(v)
+  uint32_t entropy_coding_mode_flag = 0;                      // u(1)
+  uint32_t bottom_field_pic_order_in_frame_present_flag = 0;  // u(1)
+  uint32_t num_slice_groups_minus1 = 0;                       // ue(v)
+  uint32_t slice_group_map_type = 0;                          // ue(v)
+  std::array<int32_t, 8> run_length_minus1;                   // ue(v)
+  std::array<int32_t, 8> top_left;                            // ue(v)
+  std::array<int32_t, 8> bottom_right;                        // ue(v)
+  uint32_t slice_group_change_direction_flag = 0;             // u(1)
+  uint32_t slice_group_change_rate_minus1 = 0;                // ue(v)
+  uint32_t pic_size_in_map_units_minus1 = 0;                  // ue(v)
+  std::vector<uint8_t> slice_group_id;                        // ue(v)
 
-  uint32_t num_ref_idx_l0_default_active_minus1 = 0;  // ue(v)
-  uint32_t num_ref_idx_l1_default_active_minus1 = 0;  // ue(v)
-  bool weighted_pred_flag = 0;                        // u(1)
-  uint32_t weighted_bipred_idc = 0;                   // u(2)
-  int pic_init_qp_minus26 = 0;                        // se(v)
-  int pic_init_ps_minus26 = 0;                        // se(v)
-  int chroma_qp_index_offset = 0;                     // se(v)
-  bool deblocking_filter_control_present_flag = 0;    // u(1)
-  bool constrained_intra_pred_flag = 0;               // u(1)
-  bool redundant_pic_cnt_present_flag = 0;            // u(1)
-  bool transform_8x8_mode_flag = 0;                   // u(1)
-  bool pic_scaling_matrix_present_flag = 0;           // u(1)
+  uint32_t num_ref_idx_l0_default_active_minus1 = 0;    // ue(v)
+  uint32_t num_ref_idx_l1_default_active_minus1 = 0;    // ue(v)
+  uint32_t weighted_pred_flag = 0;                      // u(1)
+  uint32_t weighted_bipred_idc = 0;                     // u(2)
+  int32_t pic_init_qp_minus26 = 0;                      // se(v)
+  int32_t pic_init_qs_minus26 = 0;                      // se(v)
+  int32_t chroma_qp_index_offset = 0;                   // se(v)
+  uint32_t deblocking_filter_control_present_flag = 0;  // u(1)
+  uint32_t constrained_intra_pred_flag = 0;             // u(1)
+  uint32_t redundant_pic_cnt_present_flag = 0;          // u(1)
+  uint32_t transform_8x8_mode_flag = 0;                 // u(1)
+  uint32_t pic_scaling_matrix_present_flag = 0;         // u(1)
 
-  std::array<int, 12> pic_scaling_list_present_flag;  // u(1)
-  Array2D<int, 6, 16> scaling_list_4x4;               // se(v)
-  Array2D<int, 6, 64> scaling_list_8x8;               // se(v)
-  std::array<bool, 6> use_default_scaling_matrix_4x4_flag;
-  std::array<bool, 6> use_default_scaling_matrix_8x8_flag;
+  std::array<int32_t, 12> pic_scaling_list_present_flag;  // u(1)
+  Array2D<int32_t, 6, 16> scaling_list_4x4;               // se(v)
+  Array2D<int32_t, 6, 64> scaling_list_8x8;               // se(v)
+  std::array<uint32_t, 6> use_default_scaling_matrix_4x4_flag;
+  std::array<uint32_t, 6> use_default_scaling_matrix_8x8_flag;
 
-  int second_chroma_qp_index_offset;  // se(v)
+  int32_t second_chroma_qp_index_offset = 0;  // se(v)
 };
 
 template <class ParameterSetType>
