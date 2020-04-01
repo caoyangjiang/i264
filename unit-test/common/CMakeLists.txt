@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.11)
 project(common_test)
 
 set(INCS
+    ${PROJECT_SOURCE_DIR}/include/cabac_engine_test.h
     ${PROJECT_SOURCE_DIR}/include/syntax_coder_test.h
     ${PROJECT_SOURCE_DIR}/include/variable_length_coder_test.h
     ${PROJECT_SOURCE_DIR}/include/scale_quantize_test.h
@@ -10,6 +11,7 @@ set(INCS
     ${PROJECT_SOURCE_DIR}/include/common_test.h)
 
 set(SRCS
+    ${PROJECT_SOURCE_DIR}/src/cabac_engine_test.cpp
     ${PROJECT_SOURCE_DIR}/src/syntax_coder_test.cpp
     ${PROJECT_SOURCE_DIR}/src/variable_length_coder_test.cpp
     ${PROJECT_SOURCE_DIR}/src/scale_quantize_test.cpp

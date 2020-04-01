@@ -10,6 +10,7 @@ if(MSVC)
 endif()
 
 set(PROJECT_INCS
+    ${PROJECT_SOURCE_DIR}/include/i264/common/bac_engine.h
     ${PROJECT_SOURCE_DIR}/include/i264/common/bit_stream.h
     ${PROJECT_SOURCE_DIR}/include/i264/common/variable_length_coder.h
     ${PROJECT_SOURCE_DIR}/include/i264/common/access_unit.h
@@ -17,7 +18,6 @@ set(PROJECT_INCS
     ${PROJECT_SOURCE_DIR}/include/i264/common/base.h
     ${PROJECT_SOURCE_DIR}/include/i264/common/bit_stream.h
     ${PROJECT_SOURCE_DIR}/include/i264/common/bits.h
-    ${PROJECT_SOURCE_DIR}/include/i264/common/cabac.h
     ${PROJECT_SOURCE_DIR}/include/i264/common/common.h
     ${PROJECT_SOURCE_DIR}/include/i264/common/frame.h
     ${PROJECT_SOURCE_DIR}/include/i264/common/global.h
@@ -29,6 +29,7 @@ set(PROJECT_INCS
     ${PROJECT_SOURCE_DIR}/include/i264/common/yuv.h)
 
 set(PROJECT_SRCS
+    ${PROJECT_SOURCE_DIR}/src/bac_engine.cpp
     ${PROJECT_SOURCE_DIR}/src/syntax_coder.cpp
     ${PROJECT_SOURCE_DIR}/src/bit_stream.cpp
     ${PROJECT_SOURCE_DIR}/src/variable_length_coder.cpp

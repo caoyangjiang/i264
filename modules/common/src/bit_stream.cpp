@@ -37,4 +37,10 @@ size_t BitStreamWriter::GetNumberOfWrittenBits() const {
 
 const BitStream& BitStreamWriter::GetBitStream() const { return bit_stream_; }
 
+size_t BitStreamReader::GetNumberOfRemainingBits() const {
+  return bit_stream_.Size();
+}
+
+const BitStream& BitStreamReader::GetBitStream() const { return bit_stream_; }
+
 }  // namespace i264

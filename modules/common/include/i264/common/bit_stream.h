@@ -15,6 +15,7 @@
 #include "i264/common/types.h"
 
 namespace i264 {
+
 class BitStreamWriter {
  public:
   void WriteOne();
@@ -34,6 +35,27 @@ class BitStreamWriter {
 
   size_t GetNumberOfBitsUntilByteAligned() const;
   size_t GetNumberOfWrittenBits() const;
+  const BitStream& GetBitStream() const;
+
+ private:
+  BitStream bit_stream_;
+};
+
+class BitStreamReader {
+ public:
+  template <class TCODE, class TLEN,
+            class = std::enable_if_t<std::is_unsigned<TCODE>::value, void>>
+  inline void Read(TLEN length, TCODE& code) {
+    uint32_t bits = 0;
+    code = 0;
+    while ((bits < length) && bit_stream_.Size() > 0) {
+      if (bit_stream_.Front() != 0) code |= (1 << bits);
+      bit_stream_.Pop();
+      bits++;
+    }
+  }
+
+  size_t GetNumberOfRemainingBits() const;
   const BitStream& GetBitStream() const;
 
  private:
