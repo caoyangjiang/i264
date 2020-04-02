@@ -21,6 +21,8 @@ class SyntaxCoder {
   static void CodeSPS(const SPS& sps, BitStreamWriter& bit_stream_writer);
   static void CodePPS(const PPS& pps, BitStreamWriter& bit_stream_writer);
   static void CodeRbspTraillingBits(BitStreamWriter& bit_stream_writer);
+  static void CodeRbspSliceTrailingBits(BitStreamWriter& bit_stream_writer,
+                                        uint32_t entropy_coding_mode_flag);
 
   static void CodeNalUnit(uint8_t nal_ref_idc, uint8_t nal_unity_type,
                           const uint8_t* rbsp_bytes, size_t rbs_bytes_len,

@@ -646,8 +646,7 @@ Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::At(size_type n) const {
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>
 typename Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::value_type
 Bit<BIT_CONTAINER_TYPE, MSB_TO_LSB, TYPE_CHECK>::Front() const noexcept {
-  return (MSB_TO_LSB ? buffer_[0] >> (VALUE_TYPE_BIT_SIZE - 1) : buffer_[0]) &
-         ONE;
+  return BitValue(0);
 }
 
 template <class BIT_CONTAINER_TYPE, bool MSB_TO_LSB, class TYPE_CHECK>

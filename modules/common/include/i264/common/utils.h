@@ -35,6 +35,8 @@ std::string FormatPrintableArray2D(const Array2D<T, ROWS, COLUMNS>& array) {
   return os.str();
 }
 
+std::string FormatPrintableBitStream(const BitStream& bs);
+
 template <class T>
 void WriteSequenceToFile(const std::string& filename, const T& sequence) {
   std::ofstream ofs(filename, std::ios::binary | std::ios::trunc);

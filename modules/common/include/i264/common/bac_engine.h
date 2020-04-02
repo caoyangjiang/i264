@@ -19,16 +19,21 @@ class BitStreamWriter;
 class BitStreamReader;
 
 struct BACState {
+  // for encode & decode
   uint16_t range = 510;
   uint16_t low = 0;
   uint32_t bit_outstanding = 0;
   bool first_bit_flag = 1;
+
+  // for decode only
+  uint16_t offset = 0;
 
   inline void Reset() {
     range = 510;
     low = 0;
     bit_outstanding = 0;
     first_bit_flag = 1;
+    offset = 0;
   }
 };
 
@@ -83,7 +88,7 @@ class BACDecoder {
   explicit BACDecoder(BitStreamReader* reader);
   void SetBitStreamReader(BitStreamReader* reader);
   void Decode(BACState& state, BACProbabilityModel& model, uint32_t& bin_value);
-  void DecodeTerminate(BACState& state, uint32_t& bin_value);
+  void DecodeTerminate(BACState& state, uint32_t& bin_value, bool initialize);
   void Reset();
 
  private:

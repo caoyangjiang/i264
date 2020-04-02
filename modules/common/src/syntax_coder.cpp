@@ -275,6 +275,15 @@ void SyntaxCoder::CodeRbspTraillingBits(BitStreamWriter& bit_stream_writer) {
   }
 }
 
+void SyntaxCoder::CodeRbspSliceTrailingBits(BitStreamWriter& bit_stream_writer,
+                                            uint32_t entropy_coding_mode_flag) {
+  // 7.3.2.10
+  CodeRbspTraillingBits(bit_stream_writer);
+  if (entropy_coding_mode_flag) {
+    // not implemented
+  }
+}
+
 void SyntaxCoder::CodeNalUnit(uint8_t nal_ref_idc, uint8_t nal_unit_type,
                               const uint8_t* nal_unit, size_t nal_unit_len,
                               std::vector<uint8_t>& rbsp_bytes) {

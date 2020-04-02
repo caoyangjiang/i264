@@ -38,7 +38,12 @@ size_t BitStreamWriter::GetNumberOfWrittenBits() const {
 const BitStream& BitStreamWriter::GetBitStream() const { return bit_stream_; }
 
 size_t BitStreamReader::GetNumberOfRemainingBits() const {
-  return bit_stream_.Size();
+  return bit_stream_.Size() - read_index_;
+}
+
+void BitStreamReader::LoadBits(const uint8_t* data, size_t bits_count) {
+  bit_stream_ = {data, bits_count};
+  read_index_ = 0;
 }
 
 const BitStream& BitStreamReader::GetBitStream() const { return bit_stream_; }

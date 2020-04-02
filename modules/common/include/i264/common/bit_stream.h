@@ -12,6 +12,8 @@
 #ifndef MODULES_COMMON_INCLUDE_I264_COMMON_BIT_STREAM_H_
 #define MODULES_COMMON_INCLUDE_I264_COMMON_BIT_STREAM_H_
 
+#include <iostream>
+
 #include "i264/common/types.h"
 
 namespace i264 {
@@ -43,15 +45,18 @@ class BitStreamWriter {
 
 class BitStreamReader {
  public:
+  void LoadBits(const uint8_t* data, size_t bits_count);
+
   template <class TCODE, class TLEN,
             class = std::enable_if_t<std::is_unsigned<TCODE>::value, void>>
   inline void Read(TLEN length, TCODE& code) {
     uint32_t bits = 0;
     code = 0;
-    while ((bits < length) && bit_stream_.Size() > 0) {
-      if (bit_stream_.Front() != 0) code |= (1 << bits);
-      bit_stream_.Pop();
+    while ((bits < length) && (read_index_ < bit_stream_.Size())) {
+      code <<= 1;
+      code |= bit_stream_[read_index_];
       bits++;
+      read_index_++;
     }
   }
 
@@ -60,6 +65,7 @@ class BitStreamReader {
 
  private:
   BitStream bit_stream_;
+  size_t read_index_ = 0;
 };
 }  // namespace i264
 

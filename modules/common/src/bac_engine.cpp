@@ -253,7 +253,7 @@ void BACCoder::EncodeTerminate(uint32_t bin_value, BACState& state) {
     state.range = 2;
     std::invoke(renorm_e_lambda);
     std::invoke(put_bit_lambda, (state.low >> 9) & 0x01);
-    writer_->Write((state.low >> 7) & 0x03u, 2);
+    writer_->Write((((state.low >> 7) & 0x03u)) | 1u, 2);
   };
 
   // Figure 9-11 - Flowchart of encoding a decision before termination
@@ -278,6 +278,38 @@ void BACDecoder::SetBitStreamReader(BitStreamReader* reader) {
 
 void BACDecoder::Decode(BACState& state, BACProbabilityModel& model,
                         uint32_t& bin_value) {}
+
+void BACDecoder::DecodeTerminate(BACState& state, uint32_t& bin_value,
+                                 bool init_state) {
+  if (init_state) {
+    // Defined in 9.3.1.2 Initialisation process for the arithmetic decoding
+    // engine.
+    reader_->Read(9, state.offset);
+  }
+
+  auto renorm_d = [&]() {
+    for (;;) {
+      if (state.range < 256) {
+        state.range <<= 1;
+        state.offset <<= 1;
+        uint16_t bit = 0;
+        reader_->Read(1, bit);
+        state.offset |= bit;
+      } else {
+        break;
+      }
+    }
+  };
+
+  state.range = state.range - 2;
+
+  if (state.offset >= state.range) {
+    bin_value = 1;
+  } else {
+    bin_value = 0;
+    std::invoke(renorm_d);
+  }
+}
 
 void BACDecoder::Reset() { bin_counts_in_nal_units_ = 0; }
 
